@@ -46,17 +46,7 @@ export default function EmployeesPage() {
     { 
       key: "name", 
       label: "Nome",
-      render: (val: string, row: any) => {
-        let nameClass = "text-gray-900";
-        if (row.status === "inativo") {
-          nameClass = "text-red-600 font-bold";
-        } else if (row.position === "panfletista") {
-          nameClass = "text-amber-600 font-semibold";
-        } else if (row.position === "analista") {
-          nameClass = "text-blue-600 font-semibold";
-        }
-        return <span className={nameClass}>{val}</span>;
-      }
+      render: (val: string) => <span className="font-medium text-gray-900">{val}</span>
     },
     { key: "position", label: "Cargo", render: (val: string) => <Badge status={val} variant="role" /> },
     { key: "status", label: "Status", render: (val: string) => <Badge status={val} /> },

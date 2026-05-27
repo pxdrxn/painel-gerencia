@@ -57,6 +57,7 @@ export function getStatusColor(status: string): string {
     ativo: "bg-green-100 text-green-800",
     ferias: "bg-purple-100 text-purple-800",
     afastado: "bg-yellow-100 text-yellow-800",
+    inativo: "bg-red-100 text-red-800",
     desligado: "bg-red-100 text-red-800",
     completa: "bg-green-100 text-green-800",
     parcial: "bg-yellow-100 text-yellow-800",
