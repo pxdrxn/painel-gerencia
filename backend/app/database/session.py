@@ -32,10 +32,14 @@ from app.database.base import SoftDeleteMixin
 
 settings = get_settings()
 
-# asyncpg não suporta 'sslmode=require', exige 'ssl=require'
+# asyncpg não suporta 'sslmode' ou 'channel_binding', exige 'ssl=require'
 db_url = settings.DATABASE_URL
-if "postgresql+asyncpg" in db_url and "sslmode=require" in db_url:
-    db_url = db_url.replace("sslmode=require", "ssl=require")
+if "postgresql+asyncpg" in db_url:
+    import re
+    db_url = re.sub(r'[&?]channel_binding=[^&]+', '', db_url)
+    db_url = re.sub(r'[&?]sslmode=[^&]+', '', db_url)
+    if "ssl=" not in db_url:
+        db_url += ("&" if "?" in db_url else "?") + "ssl=require"
 
 engine = create_async_engine(
     db_url,
