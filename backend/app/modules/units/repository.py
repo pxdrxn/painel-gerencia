@@ -3,6 +3,7 @@ Units Repository — Acesso a dados de unidades.
 =================================================
 """
 
+from uuid import UUID
 from sqlalchemy import select, func
 from sqlalchemy.orm import aliased
 from sqlalchemy.ext.asyncio import AsyncSession
