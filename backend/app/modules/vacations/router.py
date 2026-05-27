@@ -80,3 +80,15 @@ async def complete_vacation(
     service = VacationService(db)
     vacation = await service.complete_vacation(vacation_id)
     return success_response(data={"id": str(vacation.id)}, message="Férias concluídas")
+
+@router.delete("/{vacation_id}", response_model=ApiResponse)
+async def delete_vacation(
+    vacation_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(require_manager_role),
+) -> dict:
+    """Exclui registro de férias."""
+    service = VacationService(db)
+    await service.delete_vacation(vacation_id)
+    await db.commit()
+    return success_response(message="Férias excluídas com sucesso")

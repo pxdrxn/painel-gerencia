@@ -69,6 +69,12 @@ export function useVacations() {
     return res.data;
   };
 
+  const deleteVacation = async (id: string) => {
+    const res = await api.delete<void>(`/api/vacations/${id}`);
+    await fetchVacations();
+    return res.data;
+  };
+
   return {
     vacations,
     total,
@@ -77,6 +83,7 @@ export function useVacations() {
     scheduleVacation,
     updateVacation,
     completeVacation,
+    deleteVacation,
     refetch: fetchVacations,
   };
 }

@@ -11,11 +11,11 @@ import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import Select from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
-import { FiCalendar, FiCheck, FiX } from "react-icons/fi";
+import { FiCalendar, FiCheck, FiX, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { formatDate } from "@/lib/utils";
 
 export default function AbsencesPage() {
-  const { absences, isLoading, scheduleAbsence, updateAbsence } = useAbsences();
+  const { absences, isLoading, scheduleAbsence, updateAbsence, deleteAbsence } = useAbsences();
   const { employees } = useEmployees({ limit: 100 });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +23,14 @@ export default function AbsencesPage() {
   const [date, setDate] = useState("");
   const [type, setType] = useState("folga");
   const [observations, setObservations] = useState("");
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingAbsence, setEditingAbsence] = useState<any | null>(null);
+  const [editDate, setEditDate] = useState("");
+  const [editType, setEditType] = useState("folga");
+  const [editObservations, setEditObservations] = useState("");
+  const [editStatus, setEditStatus] = useState("");
+
   const [errorMsg, setErrorMsg] = useState("");
 
   const employeeOptions = [
@@ -35,6 +43,12 @@ export default function AbsencesPage() {
     { value: "falta", label: "Falta" }
   ];
 
+  const statusOptions = [
+    { value: "agendada", label: "Agendada" },
+    { value: "confirmada", label: "Confirmada" },
+    { value: "cancelada", label: "Cancelada" }
+  ];
+
   const handleOpenModal = () => {
     setErrorMsg("");
     setEmployeeId("");
@@ -42,6 +56,16 @@ export default function AbsencesPage() {
     setType("folga");
     setObservations("");
     setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (abs: any) => {
+    setErrorMsg("");
+    setEditingAbsence(abs);
+    setEditDate(abs.date.split("T")[0]);
+    setEditType(abs.type);
+    setEditObservations(abs.observations || "");
+    setEditStatus(abs.status);
+    setIsEditModalOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,6 +86,38 @@ export default function AbsencesPage() {
     } catch (err: any) {
       console.error(err);
       setErrorMsg(err.message || "Erro ao agendar. Verifique os dados.");
+    }
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAbsence) return;
+    if (!editDate || !editType || !editStatus) {
+      setErrorMsg("Todos os campos obrigatórios devem ser preenchidos.");
+      return;
+    }
+
+    try {
+      await updateAbsence(editingAbsence.id, {
+        date: editDate,
+        type: editType,
+        status: editStatus,
+        observations: editObservations
+      });
+      setIsEditModalOpen(false);
+    } catch (err: any) {
+      console.error(err);
+      setErrorMsg(err.message || "Erro ao atualizar. Verifique os dados.");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir esta folga/falta?")) return;
+    try {
+      await deleteAbsence(id);
+    } catch (err: any) {
+      console.error(err);
+      alert("Erro ao excluir folga/falta.");
     }
   };
 
@@ -94,10 +150,10 @@ export default function AbsencesPage() {
     {
       key: "actions",
       label: "Ações",
-      render: (_: any, row: any) => {
-        if (row.status === "agendada") {
-          return (
-            <div className="flex gap-2">
+      render: (_: any, row: any) => (
+        <div className="flex items-center gap-2">
+          {row.status === "agendada" && (
+            <>
               <Button 
                 size="sm" 
                 className="bg-green-600 hover:bg-green-700 text-white focus:ring-green-500 gap-1"
@@ -113,11 +169,28 @@ export default function AbsencesPage() {
               >
                 <FiX /> Cancelar
               </Button>
-            </div>
-          );
-        }
-        return <span className="text-gray-400 text-xs">-</span>;
-      }
+            </>
+          )}
+          <Button
+            size="sm"
+            variant="outline"
+            className="p-2 border-gray-200 text-gray-600 hover:bg-gray-50"
+            onClick={() => handleOpenEdit(row)}
+            title="Editar"
+          >
+            <FiEdit2 className="w-3.5 h-3.5" />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="p-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+            onClick={() => handleDelete(row.id)}
+            title="Excluir"
+          >
+            <FiTrash2 className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      )
     }
   ];
 
@@ -127,7 +200,7 @@ export default function AbsencesPage() {
         title="Escala de Folgas & Faltas" 
         subtitle="Gerencie e agende as folgas e faltas dos colaboradores"
         action={
-          <Button className="gap-2 bg-[#836FFF] hover:bg-[#705ae6] text-white" onClick={handleOpenModal}>
+          <Button className="gap-2" onClick={handleOpenModal}>
             <FiCalendar /> Agendar Folga / Falta
           </Button>
         }
@@ -143,6 +216,7 @@ export default function AbsencesPage() {
         </CardContent>
       </Card>
 
+      {/* modal de cadastro */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Agendar Folga / Falta">
         <form onSubmit={handleSubmit} className="space-y-4">
           {errorMsg && (
@@ -193,6 +267,71 @@ export default function AbsencesPage() {
             </Button>
             <Button type="submit" className="bg-[#F3E8FF] text-[#581C87] hover:bg-[#E9D5FF] border border-[#E9D5FF] font-semibold">
               Salvar
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* modal de edicao */}
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Editar Folga / Falta">
+        <form onSubmit={handleEditSubmit} className="space-y-4">
+          {errorMsg && (
+            <div className="p-3 bg-red-50 text-red-700 text-sm rounded-md border border-red-100">
+              {errorMsg}
+            </div>
+          )}
+
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">Funcionário</label>
+            <Input 
+              type="text"
+              value={editingAbsence?.employee_name || ""}
+              disabled
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input 
+              type="date"
+              label="Data *"
+              value={editDate}
+              onChange={(e) => setEditDate(e.target.value)}
+              required
+            />
+            <Select 
+              label="Tipo *"
+              options={typeOptions}
+              value={editType}
+              onChange={(e) => setEditType(e.target.value)}
+              required
+            />
+          </div>
+
+          <Select 
+            label="Status *"
+            options={statusOptions}
+            value={editStatus}
+            onChange={(e) => setEditStatus(e.target.value)}
+            required
+          />
+
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">Observações</label>
+            <textarea
+              className="block w-full rounded-md border border-gray-300 shadow-sm sm:text-sm px-3 py-2 bg-white focus:outline-none focus:border-[#836FFF] focus:ring-1 focus:ring-[#836FFF] text-gray-900"
+              rows={3}
+              value={editObservations}
+              onChange={(e) => setEditObservations(e.target.value)}
+              placeholder="Descreva o motivo ou observações..."
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+            <Button type="button" variant="secondary" onClick={() => setIsEditModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" className="bg-[#F3E8FF] text-[#581C87] hover:bg-[#E9D5FF] border border-[#E9D5FF] font-semibold">
+              Salvar Alterações
             </Button>
           </div>
         </form>

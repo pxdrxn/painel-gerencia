@@ -59,7 +59,31 @@ class VacationService:
         if overlap:
             raise ConflictException("O funcionário já possui férias agendadas neste período")
 
-        return await self.repo.update(vacation_id, data.model_dump(exclude_unset=True))
+        old_status = vacation.status
+        new_status = data.status or old_status
+
+        updated = await self.repo.update(vacation_id, data.model_dump(exclude_unset=True))
+
+        # Ajusta status do funcionário se o status das férias mudou
+        if old_status != new_status:
+            if new_status == "em_andamento":
+                await self.employee_repo.update(vacation.employee_id, {"status": "ferias"})
+            elif old_status == "em_andamento" and new_status in ("concluida", "cancelada"):
+                await self.employee_repo.update(vacation.employee_id, {"status": "ativo"})
+
+        return updated
+
+    async def delete_vacation(self, vacation_id: UUID) -> None:
+        """Exclui registro de férias."""
+        vacation = await self.repo.get_by_id(vacation_id)
+        if not vacation:
+            raise NotFoundException("Férias não encontradas")
+            
+        if vacation.status == "em_andamento":
+            await self.employee_repo.update(vacation.employee_id, {"status": "ativo"})
+            
+        await self.db.delete(vacation)
+        await self.db.flush()
 
     async def complete_vacation(self, vacation_id: UUID) -> Vacation:
         """Marca férias como concluídas e retorna status do funcionário para ativo."""

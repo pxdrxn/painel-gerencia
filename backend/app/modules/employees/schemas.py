@@ -138,9 +138,11 @@ class EmployeeListResponse(BaseModel):
     cpf: str | None
     position: str
     unit_id: UUID | None
-    unit_name: str | None = None
     status: str
     hire_date: date
+    unit_name: str | None = None
+    start_date: date | None = None
+    termination_date: date | None = None
     absences: int = 0
     medical_leaves: int = 0
     available_unit_ids: list[str] = []

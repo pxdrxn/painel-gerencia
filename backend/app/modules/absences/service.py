@@ -37,6 +37,13 @@ class AbsenceService:
 
         old_status = absence.status
         update_data = data.model_dump(exclude_unset=True)
+
+        new_date = data.date or absence.date
+        if data.date and data.date != absence.date:
+            existing = await self.repo.get_by_employee_date(absence.employee_id, new_date)
+            if existing and existing.id != absence_id:
+                raise ConflictException(f"Já existe uma folga/falta agendada para esta data: {new_date}")
+
         updated = await self.repo.update(absence_id, update_data)
 
         # Se mudou para confirmada, incrementamos as folgas/faltas do funcionário
@@ -52,6 +59,20 @@ class AbsenceService:
                 await self.emp_repo.update(employee.id, {"absences": max(0, employee.absences - 1)})
 
         return updated
+
+    async def delete_absence(self, absence_id: UUID) -> None:
+        """Exclui fisicamente um agendamento de folga/falta."""
+        absence = await self.repo.get_by_id(absence_id)
+        if not absence:
+            raise NotFoundException("Agendamento de folga/falta não encontrado")
+
+        if absence.status == "confirmada":
+            employee = await self.emp_repo.get_by_id(absence.employee_id)
+            if employee:
+                await self.emp_repo.update(employee.id, {"absences": max(0, employee.absences - 1)})
+
+        await self.db.delete(absence)
+        await self.db.flush()
 
     async def list_absences(self) -> list[dict]:
         return await self.repo.get_all_with_employee_name()

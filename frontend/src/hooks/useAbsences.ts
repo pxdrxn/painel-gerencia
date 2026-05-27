@@ -45,10 +45,18 @@ export function useAbsences() {
   };
 
   const updateAbsence = async (id: string, absenceData: {
+    date?: string;
+    type?: string;
     status?: string;
     observations?: string;
   }) => {
     const res = await api.patch<{ id: string }>(`/api/absences/${id}`, absenceData);
+    await fetchAbsences();
+    return res.data;
+  };
+
+  const deleteAbsence = async (id: string) => {
+    const res = await api.delete<void>(`/api/absences/${id}`);
     await fetchAbsences();
     return res.data;
   };
@@ -58,6 +66,7 @@ export function useAbsences() {
     isLoading,
     scheduleAbsence,
     updateAbsence,
+    deleteAbsence,
     refetch: fetchAbsences,
   };
 }

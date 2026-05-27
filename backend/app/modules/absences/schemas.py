@@ -20,8 +20,20 @@ class AbsenceCreate(BaseModel):
 
 
 class AbsenceUpdate(BaseModel):
+    date: dt_date | None = None
+    type: str | None = None
     status: str | None = None
     observations: str | None = None
+
+    @field_validator("type")
+    @classmethod
+    def validate_type(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        allowed = {"folga", "falta"}
+        if v not in allowed:
+            raise ValueError("Tipo deve ser 'folga' ou 'falta'")
+        return v
 
     @field_validator("status")
     @classmethod
