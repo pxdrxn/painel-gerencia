@@ -76,7 +76,6 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
   const validateForm = () => {
     const tempErrors: Record<string, string> = {};
     if (!formData.name.trim()) tempErrors.name = "Nome é obrigatório";
-    if (!formData.unit_id) tempErrors.unit_id = "Selecione uma unidade";
     if (!formData.position) tempErrors.position = "Selecione um cargo";
 
     setErrors(tempErrors);
@@ -95,7 +94,6 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
         name: formData.name,
         phone: formData.phone || null,
         position: formData.position,
-        unit_id: formData.unit_id,
         hire_date: formData.hire_date,
         status: formData.status,
         observations: formData.observations || null,
@@ -189,16 +187,6 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
                 value={formData.position}
                 onChange={handleInputChange}
                 error={errors.position}
-              />
-
-              <Select 
-                name="unit_id"
-                label="Unidade *"
-                options={unitOptions}
-                value={formData.unit_id}
-                onChange={handleInputChange}
-                error={errors.unit_id}
-                disabled={loadingUnits}
               />
 
               <Input 

@@ -38,8 +38,9 @@ if "postgresql+asyncpg" in db_url:
     import re
     db_url = re.sub(r'[&?]channel_binding=[^&]+', '', db_url)
     db_url = re.sub(r'[&?]sslmode=[^&]+', '', db_url)
-    if "ssl=" not in db_url:
-        db_url += ("&" if "?" in db_url else "?") + "ssl=require"
+    if "localhost" not in db_url and "127.0.0.1" not in db_url:
+        if "ssl=" not in db_url:
+            db_url += ("&" if "?" in db_url else "?") + "ssl=require"
 
 engine = create_async_engine(
     db_url,
