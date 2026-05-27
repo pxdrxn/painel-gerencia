@@ -1,0 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   S.O.S Crédito — Design System
+   Paleta: Navy (#0F172A), Azul (#1E3A8A), Branco, Cinza
+   ============================================ */
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+  }
+}
+
+@layer components {
+  /* --- Cards de Métricas (Dashboard) --- */
+  .metric-card {
+    @apply bg-navy-900 text-white rounded-lg p-6 flex flex-col items-center justify-center;
+  }
+
+  .metric-card-value {
+    @apply text-4xl font-bold;
+  }
+
+  .metric-card-label {
+    @apply text-xs uppercase tracking-wider mt-2 text-gray-300;
+  }
+
+  /* --- Card destacado (Eficiência) --- */
+  .metric-card-highlight {
+    @apply bg-navy-700 text-white rounded-lg p-6 flex flex-col items-center justify-center;
+  }
+
+  /* --- Tabelas --- */
+  .data-table {
+    @apply w-full border-collapse;
+  }
+
+  .data-table thead {
+    @apply bg-navy-900 text-white;
+  }
+
+  .data-table th {
+    @apply px-4 py-3 text-left text-xs uppercase tracking-wider font-semibold;
+  }
+
+  .data-table td {
+    @apply px-4 py-3 text-sm border-b border-gray-100;
+  }
+
+  .data-table tbody tr:hover {
+    @apply bg-gray-50;
+  }
+
+  /* --- Badges de Status --- */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-active {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-deficit {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .badge-scheduled {
+    @apply bg-purple-100 text-purple-800;
+  }
+
+  .badge-completed {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  .badge-available {
+    @apply bg-green-100 text-green-800;
+  }
+
+  /* --- Sidebar --- */
+  .sidebar {
+    @apply fixed left-0 top-0 h-screen w-64 bg-navy-900 text-white flex flex-col;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 text-sm text-gray-300 hover:bg-navy-800 hover:text-white transition-colors;
+  }
+
+  .sidebar-link-active {
+    @apply bg-navy-700 text-white border-l-4 border-[#836FFF];
+  }
+
+  /* --- Page Header --- */
+  .page-header {
+    @apply flex items-center gap-3 mb-6;
+  }
+
+  .page-header-bar {
+    @apply w-1 h-8 bg-navy-700 rounded;
+  }
+
+  .page-header-title {
+    @apply text-2xl font-bold text-navy-900;
+  }
+}
