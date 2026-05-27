@@ -45,7 +45,6 @@ export default function EmployeesPage() {
   const columns = [
     { key: "name", label: "Nome" },
     { key: "position", label: "Cargo", render: (val: string) => <Badge status={val} variant="role" /> },
-    { key: "unit_name", label: "Unidade", render: (val: string) => val || "Sem Unidade" },
     { key: "status", label: "Status", render: (val: string) => <Badge status={val} /> },
     { key: "hire_date", label: "Contratação", render: (val: string) => formatDate(val) },
     {

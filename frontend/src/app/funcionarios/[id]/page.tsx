@@ -96,6 +96,7 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
         phone: formData.phone || null,
         position: formData.position,
         unit_id: formData.unit_id,
+        hire_date: formData.hire_date,
         status: formData.status,
         observations: formData.observations || null,
       });
@@ -202,10 +203,10 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
 
               <Input 
                 name="hire_date"
-                label="Data de Contratação (Não alterável)"
+                label="Data de Contratação"
                 type="date"
                 value={formData.hire_date}
-                disabled
+                onChange={handleInputChange}
               />
 
               <Select 

@@ -75,6 +75,7 @@ class EmployeeUpdate(BaseModel):
     email: str | None = None
     position: str | None = None
     unit_id: UUID | None = None
+    hire_date: date | None = None
     status: str | None = None
     observations: str | None = None
     absences: int | None = None
