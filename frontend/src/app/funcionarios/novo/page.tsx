@@ -64,12 +64,6 @@ export default function NewEmployeePage() {
   const validateForm = () => {
     const tempErrors: Record<string, string> = {};
     if (!formData.name.trim()) tempErrors.name = "Nome é obrigatório";
-    if (!formData.cpf) {
-      tempErrors.cpf = "CPF é obrigatório";
-    } else if (formData.cpf.replace(/\D/g, "").length !== 11) {
-      tempErrors.cpf = "CPF deve conter 11 dígitos";
-    }
-    if (!formData.unit_id) tempErrors.unit_id = "Selecione uma unidade";
     if (!formData.position) tempErrors.position = "Selecione um cargo";
     if (!formData.hire_date) tempErrors.hire_date = "Data de contratação é obrigatória";
 
@@ -87,11 +81,11 @@ export default function NewEmployeePage() {
     try {
       await createEmployee({
         name: formData.name,
-        cpf: formData.cpf,
+        cpf: null,
         phone: formData.phone || null,
-        email: formData.email || null,
+        email: null,
         position: formData.position,
-        unit_id: formData.unit_id,
+        unit_id: null,
         hire_date: formData.hire_date,
         status: formData.status,
         observations: formData.observations || null,
@@ -152,25 +146,6 @@ export default function NewEmployeePage() {
               />
 
               <Input 
-                name="cpf"
-                label="CPF *"
-                value={formData.cpf}
-                onChange={handleInputChange}
-                error={errors.cpf}
-                maxLength={14}
-                placeholder="000.000.000-00"
-              />
-
-              <Input 
-                name="email"
-                label="E-mail"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="exemplo@soscredito.com"
-              />
-
-              <Input 
                 name="phone"
                 label="Telefone / WhatsApp"
                 value={formData.phone}
@@ -185,16 +160,6 @@ export default function NewEmployeePage() {
                 value={formData.position}
                 onChange={handleInputChange}
                 error={errors.position}
-              />
-
-              <Select 
-                name="unit_id"
-                label="Unidade *"
-                options={unitOptions}
-                value={formData.unit_id}
-                onChange={handleInputChange}
-                error={errors.unit_id}
-                disabled={loadingUnits}
               />
 
               <Input 

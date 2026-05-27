@@ -40,7 +40,7 @@ class UnitRepository(BaseRepository[Unit]):
             .outerjoin(Employee, (Employee.unit_id == Unit.id) & (Employee.status == 'ativo') & (Employee.is_deleted == False))
             .outerjoin(Manager, Unit.manager_id == Manager.id)
             .group_by(Unit.id, Manager.name)
-            .order_by(Unit.name)
+            .order_by(Unit.created_at)
         )
         
         result = await self.db.execute(query)

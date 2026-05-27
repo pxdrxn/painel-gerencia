@@ -30,7 +30,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
-          <div className="bg-[#1e293b] px-8 py-10 text-center">
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 px-8 py-10 text-center">
             <div className="w-16 h-16 bg-[#836FFF] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#836FFF]/30">
               <span className="text-white text-2xl font-bold tracking-tight">SOS</span>
             </div>

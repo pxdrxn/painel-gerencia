@@ -30,6 +30,7 @@ export function useProduction(month: number, year: number) {
   const [ranking, setRanking] = useState<ProductionRanking[]>([]);
   const [monthly, setMonthly] = useState<MonthlyProduction[]>([]);
   const [summary, setSummary] = useState<ProductionSummary | null>(null);
+  const [goals, setGoals] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProduction = useCallback(async () => {
@@ -40,15 +41,17 @@ export function useProduction(month: number, year: number) {
         .map(m => `months=${m}`)
         .join("&");
 
-      const [summaryRes, rankingRes, comparisonRes] = await Promise.all([
+      const [summaryRes, rankingRes, comparisonRes, goalsRes] = await Promise.all([
         api.get<ProductionSummary>(`/api/production?year=${year}&month=${month}`),
         api.get<ProductionRanking[]>(`/api/production/ranking?year=${year}&month=${month}`),
-        api.get<MonthlyProduction[]>(`/api/production/comparison?year=${year}&${monthsQuery}`)
+        api.get<MonthlyProduction[]>(`/api/production/comparison?year=${year}&${monthsQuery}`),
+        api.get<any[]>((`/api/goals?year=${year}&month=${month}`))
       ]);
 
       setSummary(summaryRes.data);
       setRanking(rankingRes.data || []);
       setMonthly(comparisonRes.data || []);
+      setGoals(goalsRes.data || []);
     } catch (e) {
       console.error("Error fetching production:", e);
     } finally {
@@ -68,7 +71,17 @@ export function useProduction(month: number, year: number) {
       quantity,
       observations
     });
-    await fetchProduction();
+    return res.data;
+  };
+
+  const saveGoal = async (unitId: string, targetValue: number) => {
+    const res = await api.post<{ id: string }>("/api/goals", {
+      unit_id: unitId,
+      year,
+      month,
+      target_value: targetValue,
+      achieved_value: 0
+    });
     return res.data;
   };
 
@@ -76,8 +89,10 @@ export function useProduction(month: number, year: number) {
     ranking,
     monthly,
     summary,
+    goals,
     isLoading,
     saveProduction,
+    saveGoal,
     refetch: fetchProduction,
   };
 }

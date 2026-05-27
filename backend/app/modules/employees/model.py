@@ -48,8 +48,8 @@ class Employee(Base, TimestampMixin, SoftDeleteMixin, AuditMixin):
     name: Mapped[str] = mapped_column(
         String(255), nullable=False
     )
-    cpf: Mapped[str] = mapped_column(
-        String(14), unique=True, nullable=False, index=True
+    cpf: Mapped[str | None] = mapped_column(
+        String(14), unique=True, nullable=True, index=True
     )  # Formato: 000.000.000-00
     phone: Mapped[str | None] = mapped_column(
         String(20), nullable=True
@@ -60,8 +60,8 @@ class Employee(Base, TimestampMixin, SoftDeleteMixin, AuditMixin):
     position: Mapped[str] = mapped_column(
         String(50), nullable=False
     )  # atendente | panfletista | analista | gerente | supervisor
-    unit_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("units.id"), nullable=False, index=True
+    unit_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("units.id"), nullable=True, index=True
     )
     hire_date: Mapped[date] = mapped_column(
         Date, nullable=False

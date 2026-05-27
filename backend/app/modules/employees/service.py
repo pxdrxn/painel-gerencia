@@ -30,13 +30,15 @@ class EmployeeService:
 
     async def create_employee(self, data: EmployeeCreate, created_by: UUID) -> Employee:
         """Cadastrar novo funcionário. Valida CPF único e unidade existente."""
-        existing = await self.repo.get_by_cpf(data.cpf)
-        if existing:
-            raise ConflictException("Já existe um funcionário com este CPF")
+        if data.cpf:
+            existing = await self.repo.get_by_cpf(data.cpf)
+            if existing:
+                raise ConflictException("Já existe um funcionário com este CPF")
             
-        unit = await self.unit_repo.get_by_id(data.unit_id)
-        if not unit or not unit.is_active:
-            raise BusinessRuleException("Unidade destino inválida ou inativa")
+        if data.unit_id:
+            unit = await self.unit_repo.get_by_id(data.unit_id)
+            if not unit or not unit.is_active:
+                raise BusinessRuleException("Unidade destino inválida ou inativa")
 
         emp_data = data.model_dump()
         emp_data["created_by"] = created_by

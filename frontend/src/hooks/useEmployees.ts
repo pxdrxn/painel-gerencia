@@ -12,10 +12,10 @@ import { api } from "@/lib/api";
 export interface Employee {
   id: string;
   name: string;
-  cpf: string;
+  cpf: string | null;
   email: string | null;
   phone: string | null;
-  unit_id: string;
+  unit_id: string | null;
   unit_name?: string;
   position: string;
   hire_date: string;

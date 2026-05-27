@@ -26,27 +26,40 @@ export default function ProductionPage() {
   const [month, setMonth] = useState(currentDate.getMonth() + 1);
   const [year, setYear] = useState(currentDate.getFullYear());
 
-  const { ranking, monthly, summary, saveProduction, refetch, isLoading: isProdLoading } = useProduction(month, year);
+  const { ranking, monthly, summary, goals, saveProduction, saveGoal, refetch, isLoading: isProdLoading } = useProduction(month, year);
   const { units, isLoading: isUnitsLoading } = useUnits();
 
   const [localQuantities, setLocalQuantities] = useState<{ [unitId: string]: string }>({});
+  const [localGoals, setLocalGoals] = useState<{ [unitId: string]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Sync server production quantities with local state
+  // Sync server production quantities and goals with local state
   useEffect(() => {
     if (units.length) {
-      const initial: { [unitId: string]: string } = {};
+      const initialQty: { [unitId: string]: string } = {};
+      const initialGoal: { [unitId: string]: string } = {};
       units.forEach(u => {
-        const found = ranking.find(r => r.unit_id === u.id);
-        initial[u.id] = found ? found.quantity.toString() : "0";
+        const foundQty = ranking.find(r => r.unit_id === u.id);
+        initialQty[u.id] = foundQty ? foundQty.quantity.toString() : "0";
+
+        const foundGoal = goals.find(g => g.unit_id === u.id);
+        initialGoal[u.id] = foundGoal ? foundGoal.target_value.toString() : "0";
       });
-      setLocalQuantities(initial);
+      setLocalQuantities(initialQty);
+      setLocalGoals(initialGoal);
     }
-  }, [ranking, units]);
+  }, [ranking, goals, units]);
 
   const handleQuantityChange = (unitId: string, val: string) => {
     setLocalQuantities(prev => ({
+      ...prev,
+      [unitId]: val
+    }));
+  };
+
+  const handleGoalChange = (unitId: string, val: string) => {
+    setLocalGoals(prev => ({
       ...prev,
       [unitId]: val
     }));
@@ -58,7 +71,9 @@ export default function ProductionPage() {
     try {
       for (const unitId of Object.keys(localQuantities)) {
         const qty = parseInt(localQuantities[unitId]) || 0;
+        const targetVal = parseFloat(localGoals[unitId]) || 0;
         await saveProduction(unitId, qty, `Faturamento lançado pelo administrador em ${month}/${year}`);
+        await saveGoal(unitId, targetVal);
       }
       await refetch();
       setShowSuccess(true);
@@ -98,7 +113,7 @@ export default function ProductionPage() {
       {showSuccess && (
         <div className="flex items-center gap-2 p-4 bg-green-50 text-green-800 border border-green-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
           <FiCheckCircle className="w-5 h-5 text-green-600" />
-          <span className="text-sm font-medium">Lançamentos de faturamento salvos com sucesso!</span>
+          <span className="text-sm font-medium">Lançamentos de faturamento e metas salvos com sucesso!</span>
         </div>
       )}
 
@@ -124,7 +139,7 @@ export default function ProductionPage() {
         {/* Lançamento Inline */}
         <Card className="lg:col-span-7">
           <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 pb-4">
-            <CardTitle>Lançamento de Faturamento Mensal</CardTitle>
+            <CardTitle>Lançamento de Faturamento e Metas</CardTitle>
             <Button 
               className="gap-2 bg-[#836FFF] hover:bg-[#705ae6] text-white shadow-sm focus:ring-[#836FFF]"
               onClick={handleSaveAll}
@@ -140,21 +155,34 @@ export default function ProductionPage() {
             ) : (
               <div className="divide-y divide-gray-100">
                 {units.map((unit) => (
-                  <div key={unit.id} className="flex items-center justify-between p-4 hover:bg-gray-50/50 transition-colors">
+                  <div key={unit.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-gray-50/50 transition-colors">
                     <div>
                       <span className="font-semibold text-gray-900 block">{unit.name}</span>
                       <span className="text-xs text-gray-400">Telefone: {unit.phone || "-"}</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-gray-400 text-sm font-semibold">R$</span>
-                      <Input 
-                        type="number"
-                        min="0"
-                        placeholder="0.00"
-                        className="w-36 text-right pr-2 font-medium"
-                        value={localQuantities[unit.id] ?? "0"}
-                        onChange={(e) => handleQuantityChange(unit.id, e.target.value)}
-                      />
+                    <div className="flex flex-wrap items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-400 text-xs font-semibold uppercase">Meta: R$</span>
+                        <Input 
+                          type="number"
+                          min="0"
+                          placeholder="0.00"
+                          className="w-28 text-right pr-2 font-medium"
+                          value={localGoals[unit.id] ?? "0"}
+                          onChange={(e) => handleGoalChange(unit.id, e.target.value)}
+                        />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-400 text-xs font-semibold uppercase">Faturamento: R$</span>
+                        <Input 
+                          type="number"
+                          min="0"
+                          placeholder="0.00"
+                          className="w-28 text-right pr-2 font-medium"
+                          value={localQuantities[unit.id] ?? "0"}
+                          onChange={(e) => handleQuantityChange(unit.id, e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}

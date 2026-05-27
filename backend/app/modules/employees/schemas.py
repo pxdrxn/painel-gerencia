@@ -12,11 +12,11 @@ from pydantic import BaseModel, field_validator
 class EmployeeCreate(BaseModel):
     """Dados para cadastrar um funcionário."""
     name: str
-    cpf: str
+    cpf: str | None = None
     phone: str | None = None
     email: str | None = None
     position: str  # atendente | panfletista | analista | gerente | supervisor
-    unit_id: UUID
+    unit_id: UUID | None = None
     hire_date: date
     status: str = "ativo"
     observations: str | None = None
@@ -25,8 +25,11 @@ class EmployeeCreate(BaseModel):
 
     @field_validator("cpf")
     @classmethod
-    def validate_cpf(cls, v: str) -> str:
+    def validate_cpf(cls, v: str | None) -> str | None:
         """Valida formato do CPF (000.000.000-00) e os dígitos verificadores."""
+        if not v:
+            return None
+            
         import re
         
         if not re.match(r"^\d{3}\.\d{3}\.\d{3}-\d{2}$", v):
@@ -103,11 +106,11 @@ class EmployeeResponse(BaseModel):
     """Dados completos do funcionário."""
     id: UUID
     name: str
-    cpf: str
+    cpf: str | None
     phone: str | None
     email: str | None
     position: str
-    unit_id: UUID
+    unit_id: UUID | None
     unit_name: str | None = None  # Populated via join
     hire_date: date
     status: str
@@ -125,9 +128,9 @@ class EmployeeListResponse(BaseModel):
     """Item da lista de funcionários (resumido para tabela)."""
     id: UUID
     name: str
-    cpf: str
+    cpf: str | None
     position: str
-    unit_id: UUID
+    unit_id: UUID | None
     unit_name: str | None = None
     status: str
     hire_date: date

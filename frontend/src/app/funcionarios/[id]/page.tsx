@@ -94,7 +94,6 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
       await updateEmployee(params.id, {
         name: formData.name,
         phone: formData.phone || null,
-        email: formData.email || null,
         position: formData.position,
         unit_id: formData.unit_id,
         status: formData.status,
@@ -173,21 +172,6 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
                 value={formData.name}
                 onChange={handleInputChange}
                 error={errors.name}
-              />
-
-              <Input 
-                name="cpf"
-                label="CPF (Não alterável)"
-                value={formData.cpf}
-                disabled
-              />
-
-              <Input 
-                name="email"
-                label="E-mail"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
               />
 
               <Input 

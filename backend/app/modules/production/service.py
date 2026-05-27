@@ -27,9 +27,26 @@ class ProductionService:
     async def register_production(self, data: ProductionCreate) -> MonthlyProduction:
         existing = await self.repo.get_by_unit_month(data.unit_id, data.year, data.month)
         if existing:
-            return await self.repo.update(existing.id, {"quantity": data.quantity, "observations": data.observations})
+            prod = await self.repo.update(existing.id, {"quantity": data.quantity, "observations": data.observations})
+        else:
+            prod = await self.repo.create(data.model_dump())
             
-        return await self.repo.create(data.model_dump())
+        # Sync with UnitGoal achieved_value
+        from app.modules.goals.repository import GoalRepository
+        goal_repo = GoalRepository(self.db)
+        goal_existing = await goal_repo.get_by_unit_month(data.unit_id, data.year, data.month)
+        if goal_existing:
+            await goal_repo.update(goal_existing.id, {"achieved_value": data.quantity})
+        else:
+            await goal_repo.create({
+                "unit_id": data.unit_id,
+                "year": data.year,
+                "month": data.month,
+                "target_value": 0,
+                "achieved_value": data.quantity
+            })
+            
+        return prod
 
     async def update_production(self, production_id: UUID, data: ProductionUpdate) -> MonthlyProduction:
         prod = await self.repo.get_by_id(production_id)

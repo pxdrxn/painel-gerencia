@@ -16,7 +16,6 @@ export default function UnitsPage() {
   const columns = [
     { key: "name", label: "Unidade", render: (val: string) => <span className="font-medium text-gray-900">{val}</span> },
     { key: "phone", label: "Telefone", render: (val: string | null) => val ? formatPhone(val) : "-" },
-    { key: "is_active", label: "Status Operacional", render: (val: boolean) => <Badge status={val ? "ativa" : "inativa"} /> },
     {
       key: "actions",
       label: "Ações",

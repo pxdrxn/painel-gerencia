@@ -16,7 +16,12 @@ class GoalService:
     async def create_goal(self, data: GoalCreate) -> UnitGoal:
         existing = await self.repo.get_by_unit_month(data.unit_id, data.year, data.month)
         if existing:
-            raise ConflictException(f"Meta já definida para esta unidade no mês {data.month}/{data.year}")
+            update_data = {"target_value": data.target_value}
+            if data.achieved_value != 0:
+                update_data["achieved_value"] = data.achieved_value
+            else:
+                update_data["achieved_value"] = existing.achieved_value
+            return await self.repo.update(existing.id, update_data)
         return await self.repo.create(data.model_dump())
         
     async def update_goal(self, goal_id: UUID, data: GoalUpdate) -> UnitGoal:
