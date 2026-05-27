@@ -22,8 +22,15 @@ async def main():
         # Parse connection URL
         parsed = urlparse(db_url)
         
+        # Neon exige conexão SSL. Adaptamos a query para o asyncpg.
+        query = parsed.query
+        if "sslmode=require" in query:
+            query = query.replace("sslmode=require", "ssl=require")
+        elif not query:
+            query = "ssl=require"
+            
         # Conecta no banco padrão 'postgres' para criar 'painel_gerencia'
-        dsn = f"postgresql://{parsed.username}:{parsed.password}@{parsed.hostname}:{parsed.port or 5432}/postgres"
+        dsn = f"postgresql://{parsed.username}:{parsed.password}@{parsed.hostname}:{parsed.port or 5432}/postgres?{query}"
         
         db_name = parsed.path.lstrip("/")
         if not db_name:
