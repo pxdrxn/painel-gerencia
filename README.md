@@ -14,14 +14,14 @@ Sistema interno moderno para gestão operacional da S.O.S Crédito.
 
 Painel operacional interno para monitoramento e gestão de:
 
-- 👥 **Funcionários** — CRUD completo com histórico
-- 🏪 **Unidades/Lojas** — Mapeamento de 10 unidades
-- 🏖️ **Férias** — Calendário com detecção de conflitos
-- 📊 **Disponibilidade** — Monitoramento operacional em tempo real
-- 📈 **Produção** — Métricas mensais e ranking
-- 🎯 **Metas** — Controle por unidade
-- 📉 **Retenção** — Análise de tempo de empresa
-- 🖥️ **Dashboard** — Painel de controle unificado
+- 👥 **Funcionários** — CRUD completo com controle de folgas e atestados
+- 🏪 **Unidades/Lojas** — Mapeamento de unidades com monitoramento
+- 🏖️ **Férias** — Calendário com controle de status (concluir, cancelar)
+- 📊 **Disponibilidade** — Monitoramento de equipe com alocações múltiplas por unidade
+- 📈 **Produção** — Lançamento e acompanhamento de faturamento mensal das lojas
+- 🎯 **Metas** — Controle de metas financeiras por unidade
+- 🛡️ **Segurança de Produção** — JWT blacklist, rate limiting (SlowAPI), headers HTTPS estritos e Next.js SSR middleware
+- 🖥️ **Dashboard** — Painel consolidado com métricas em tempo real
 
 ---
 
@@ -74,13 +74,10 @@ cd painel-gerencia
 # 2. Copiar variáveis de ambiente
 cp backend/.env.example backend/.env
 
-# 3. Subir backend + banco com Docker
+# 3. Subir backend + banco com Docker (aplica migrações automaticamente no entrypoint)
 docker compose up -d
 
-# 4. Aplicar migrações
-docker compose exec backend alembic upgrade head
-
-# 5. Criar primeiro admin
+# 4. Criar primeiro administrador (Admin)
 docker compose exec backend python -m scripts.create_admin
 
 # 6. Acessar API docs
@@ -121,7 +118,6 @@ O sistema usa **JWT** com 3 níveis de acesso:
 | Availability | `/api/availability` | GET (read-only) |
 | Production | `/api/production` | CRUD + ranking + comparison |
 | Goals | `/api/goals` | CRUD |
-| Retention | `/api/retention` | GET (read-only) |
 | Dashboard | `/api/dashboard` | GET metrics |
 
 Documentação interativa: `http://localhost:8000/api/docs`
@@ -157,22 +153,21 @@ Documentação interativa: `http://localhost:8000/api/docs`
 
 ```
 backend/app/
-├── core/           → Config, Security, Permissions, Exceptions
+├── core/           → Config, Security, Permissions, Exceptions, Limiter
 ├── database/       → Base models, Session, Repository genérico
-├── middleware/      → Audit logging, Error handling
+├── middleware/      → Security Headers, Error handling
 ├── modules/        → Domínios de negócio
-│   ├── auth/       → JWT authentication
+│   ├── auth/       → JWT authentication & blacklist model
 │   ├── users/      → User management
-│   ├── employees/  → Employee CRUD
-│   ├── units/      → Store management
+│   ├── employees/  → Employee CRUD & validations
+│   ├── units/      → Store management & optimized stats
 │   ├── vacations/  → Vacation calendar
-│   ├── availability/ → Operational availability
-│   ├── production/ → Monthly production
-│   ├── retention/  → Employee retention
+│   ├── availability/ → Operational availability alocations
+│   ├── production/ → Monthly production (stores)
 │   ├── goals/      → Unit goals
 │   └── dashboard/  → Unified metrics
 ├── background/     → BackgroundTasks (availability, vacations)
-└── main.py         → FastAPI application factory
+└── main.py         → FastAPI application factory & lifespan config
 ```
 
 ---
