@@ -63,9 +63,15 @@ class Employee(Base, TimestampMixin, SoftDeleteMixin, AuditMixin):
     unit_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("units.id"), nullable=True, index=True
     )
+    start_date: Mapped[date | None] = mapped_column(
+        Date, nullable=True
+    )  # Data de início (sem contrato)
     hire_date: Mapped[date] = mapped_column(
         Date, nullable=False
     )
+    termination_date: Mapped[date | None] = mapped_column(
+        Date, nullable=True
+    )  # Data de demissão
     status: Mapped[str] = mapped_column(
         String(20), nullable=False, default="ativo", index=True
     )  # ativo | inativo | ferias | afastado

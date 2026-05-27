@@ -43,7 +43,21 @@ export default function EmployeesPage() {
   };
 
   const columns = [
-    { key: "name", label: "Nome" },
+    { 
+      key: "name", 
+      label: "Nome",
+      render: (val: string, row: any) => {
+        let nameClass = "text-gray-900";
+        if (row.status === "inativo") {
+          nameClass = "text-red-600 font-bold";
+        } else if (row.position === "panfletista") {
+          nameClass = "text-amber-600 font-semibold";
+        } else if (row.position === "analista") {
+          nameClass = "text-blue-600 font-semibold";
+        }
+        return <span className={nameClass}>{val}</span>;
+      }
+    },
     { key: "position", label: "Cargo", render: (val: string) => <Badge status={val} variant="role" /> },
     { key: "status", label: "Status", render: (val: string) => <Badge status={val} /> },
     { key: "hire_date", label: "Contratação", render: (val: string) => formatDate(val) },

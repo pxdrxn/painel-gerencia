@@ -17,7 +17,9 @@ class EmployeeCreate(BaseModel):
     email: str | None = None
     position: str  # atendente | panfletista | analista | gerente | supervisor
     unit_id: UUID | None = None
+    start_date: date | None = None
     hire_date: date
+    termination_date: date | None = None
     status: str = "ativo"
     observations: str | None = None
     absences: int = 0
@@ -75,7 +77,9 @@ class EmployeeUpdate(BaseModel):
     email: str | None = None
     position: str | None = None
     unit_id: UUID | None = None
+    start_date: date | None = None
     hire_date: date | None = None
+    termination_date: date | None = None
     status: str | None = None
     observations: str | None = None
     absences: int | None = None
@@ -113,7 +117,9 @@ class EmployeeResponse(BaseModel):
     position: str
     unit_id: UUID | None
     unit_name: str | None = None  # Populated via join
+    start_date: date | None = None
     hire_date: date
+    termination_date: date | None = None
     status: str
     observations: str | None
     absences: int = 0

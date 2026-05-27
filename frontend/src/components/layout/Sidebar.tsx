@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { label: "Unidades", href: "/unidades", icon: FiHome },
   { label: "Férias", href: "/ferias", icon: FiCalendar },
   { label: "Disponibilidade", href: "/disponibilidade", icon: FiCheckSquare },
+  { label: "Folgas & Faltas", href: "/folgas", icon: FiActivity },
   { label: "Produção", href: "/producao", icon: FiTrendingUp },
 ];
 

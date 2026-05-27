@@ -18,7 +18,9 @@ export interface Employee {
   unit_id: string | null;
   unit_name?: string;
   position: string;
+  start_date?: string | null;
   hire_date: string;
+  termination_date?: string | null;
   salary: number;
   status: string;
   observations?: string | null;
@@ -39,7 +41,7 @@ export function useEmployees(initialFilters?: EmployeesFilters) {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [filters, setFilters] = useState<EmployeesFilters>(initialFilters || { skip: 0, limit: 10 });
+  const [filters, setFilters] = useState<EmployeesFilters>(initialFilters || { skip: 0, limit: 100 });
 
   const fetchEmployees = useCallback(async () => {
     setIsLoading(true);

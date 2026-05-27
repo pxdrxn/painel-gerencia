@@ -24,7 +24,9 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
     email: "",
     position: "atendente",
     unit_id: "",
+    start_date: "",
     hire_date: "",
+    termination_date: "",
     status: "ativo",
     observations: "",
   });
@@ -46,7 +48,9 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
           email: data.email || "",
           position: data.position || "atendente",
           unit_id: data.unit_id || "",
+          start_date: data.start_date || "",
           hire_date: data.hire_date || "",
+          termination_date: data.termination_date || "",
           status: data.status || "ativo",
           observations: data.observations || "",
         });
@@ -94,7 +98,9 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
         name: formData.name,
         phone: formData.phone || null,
         position: formData.position,
+        start_date: formData.start_date || null,
         hire_date: formData.hire_date,
+        termination_date: formData.termination_date || null,
         status: formData.status,
         observations: formData.observations || null,
       });
@@ -190,10 +196,26 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
               />
 
               <Input 
+                name="start_date"
+                label="Data de Início (Sem Contrato)"
+                type="date"
+                value={formData.start_date}
+                onChange={handleInputChange}
+              />
+
+              <Input 
                 name="hire_date"
                 label="Data de Contratação"
                 type="date"
                 value={formData.hire_date}
+                onChange={handleInputChange}
+              />
+
+              <Input 
+                name="termination_date"
+                label="Data de Demissão"
+                type="date"
+                value={formData.termination_date}
                 onChange={handleInputChange}
               />
 

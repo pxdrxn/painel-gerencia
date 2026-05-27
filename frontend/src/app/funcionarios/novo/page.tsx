@@ -23,6 +23,7 @@ export default function NewEmployeePage() {
     email: "",
     position: "atendente",
     unit_id: "",
+    start_date: "",
     hire_date: new Date().toISOString().split("T")[0],
     status: "ativo",
     observations: "",
@@ -86,6 +87,7 @@ export default function NewEmployeePage() {
         email: null,
         position: formData.position,
         unit_id: null,
+        start_date: formData.start_date || null,
         hire_date: formData.hire_date,
         status: formData.status,
         observations: formData.observations || null,
@@ -160,6 +162,14 @@ export default function NewEmployeePage() {
                 value={formData.position}
                 onChange={handleInputChange}
                 error={errors.position}
+              />
+
+              <Input 
+                name="start_date"
+                label="Data de Início (Sem Contrato)"
+                type="date"
+                value={formData.start_date}
+                onChange={handleInputChange}
               />
 
               <Input 

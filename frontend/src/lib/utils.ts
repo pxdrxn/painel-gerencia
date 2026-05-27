@@ -61,6 +61,11 @@ export function getStatusColor(status: string): string {
     completa: "bg-green-100 text-green-800",
     parcial: "bg-yellow-100 text-yellow-800",
     critica: "bg-red-100 text-red-800",
+    folga: "bg-blue-100 text-blue-800",
+    falta: "bg-orange-100 text-orange-800",
+    agendada: "bg-indigo-100 text-indigo-800",
+    confirmada: "bg-emerald-100 text-emerald-800",
+    cancelada: "bg-gray-100 text-gray-800",
   };
   return map[status.toLowerCase()] || "bg-gray-100 text-gray-800";
 }

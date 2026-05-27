@@ -27,6 +27,7 @@ from app.modules.vacations.model import Vacation  # noqa: F401
 from app.modules.production.model import MonthlyProduction  # noqa: F401
 from app.modules.goals.model import UnitGoal  # noqa: F401
 from app.modules.auth.model import RevokedToken  # noqa: F401
+from app.modules.absences.model import Absence  # noqa: F401
 
 # Alembic Config object
 config = context.config
