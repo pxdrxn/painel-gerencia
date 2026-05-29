@@ -154,7 +154,7 @@ export default function UnitDetailPage({ params }: { params: { id: string } }) {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#836FFF]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1B365D]"></div>
       </div>
     );
   }

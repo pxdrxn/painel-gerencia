@@ -153,7 +153,7 @@ export default function AvailabilityPage() {
         <Button
           size="sm"
           variant="outline"
-          className="gap-1 text-[#836FFF] border-[#836FFF]/30 hover:bg-[#F3E8FF]"
+          className="gap-1 text-[#0369A1] border-[#0369A1]/30 hover:bg-[#E0F2FE]"
           onClick={() => handleOpenEdit(row.unit_id, row.unit_name)}
         >
           <FiEdit2 className="w-3.5 h-3.5" /> Editar

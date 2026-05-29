@@ -19,11 +19,11 @@ export default function Button({
   const baseStyles = "inline-flex items-center justify-center font-medium transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
   
   const variants = {
-    primary: "bg-[#F3E8FF] text-[#581C87] hover:bg-[#E9D5FF] focus:ring-[#836FFF] font-semibold border border-[#E9D5FF]",
+    primary: "bg-[#E0F2FE] text-[#0369A1] hover:bg-[#BAE6FD] focus:ring-[#0369A1] font-semibold border border-[#BAE6FD]",
     secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500",
     danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
     ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
-    outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-[#836FFF]",
+    outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-[#0369A1]",
   };
   
   const sizes = {

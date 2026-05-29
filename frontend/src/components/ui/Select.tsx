@@ -28,7 +28,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
               "block w-full rounded-md border shadow-sm sm:text-sm px-3 py-2 bg-white focus:outline-none transition-colors appearance-none",
               error 
                 ? "border-red-300 text-red-900 focus:border-red-500 focus:ring-1 focus:ring-red-500" 
-                : "border-gray-300 text-gray-900 focus:border-[#836FFF] focus:ring-1 focus:ring-[#836FFF]",
+                : "border-gray-300 text-gray-900 focus:border-[#1B365D] focus:ring-1 focus:ring-[#1B365D]",
               className
             )}
             {...props}

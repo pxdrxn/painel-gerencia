@@ -87,7 +87,7 @@ export default function EmployeesPage() {
           </button>
           <span className="min-w-[24px] text-center font-semibold text-gray-900 text-sm">{val || 0}</span>
           <button
-            className="w-6 h-6 rounded-md bg-gray-100 hover:bg-purple-50 hover:text-[#836FFF] flex items-center justify-center transition-colors text-gray-500 disabled:opacity-40"
+            className="w-6 h-6 rounded-md bg-gray-100 hover:bg-sky-50 hover:text-[#0369A1] flex items-center justify-center transition-colors text-gray-500 disabled:opacity-40"
             onClick={() => handleIncrement(row.id, "absences", val || 0)}
             disabled={updatingId === row.id}
           >
@@ -110,7 +110,7 @@ export default function EmployeesPage() {
           </button>
           <span className="min-w-[24px] text-center font-semibold text-gray-900 text-sm">{val || 0}</span>
           <button
-            className="w-6 h-6 rounded-md bg-gray-100 hover:bg-purple-50 hover:text-[#836FFF] flex items-center justify-center transition-colors text-gray-500 disabled:opacity-40"
+            className="w-6 h-6 rounded-md bg-gray-100 hover:bg-sky-50 hover:text-[#0369A1] flex items-center justify-center transition-colors text-gray-500 disabled:opacity-40"
             onClick={() => handleIncrement(row.id, "medical_leaves", val || 0)}
             disabled={updatingId === row.id}
           >

@@ -90,7 +90,7 @@
   }
 
   .sidebar-link-active {
-    @apply bg-navy-700 text-white border-l-4 border-[#836FFF];
+    @apply bg-navy-700 text-white border-l-4 border-sky-400;
   }
 
   /* --- Page Header --- */

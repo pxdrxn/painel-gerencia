@@ -253,7 +253,7 @@ export default function AbsencesPage() {
           <div className="space-y-1">
             <label className="block text-sm font-medium text-gray-700">Observações</label>
             <textarea
-              className="block w-full rounded-md border border-gray-300 shadow-sm sm:text-sm px-3 py-2 bg-white focus:outline-none focus:border-[#836FFF] focus:ring-1 focus:ring-[#836FFF] text-gray-900"
+              className="block w-full rounded-md border border-gray-300 shadow-sm sm:text-sm px-3 py-2 bg-white focus:outline-none focus:border-[#1B365D] focus:ring-1 focus:ring-[#1B365D] text-gray-900"
               rows={3}
               value={observations}
               onChange={(e) => setObservations(e.target.value)}
@@ -265,7 +265,7 @@ export default function AbsencesPage() {
             <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)}>
               Cancelar
             </Button>
-            <Button type="submit" className="bg-[#F3E8FF] text-[#581C87] hover:bg-[#E9D5FF] border border-[#E9D5FF] font-semibold">
+            <Button type="submit" className="bg-[#E0F2FE] text-[#0369A1] hover:bg-[#BAE6FD] border border-[#BAE6FD] font-semibold">
               Salvar
             </Button>
           </div>
@@ -318,7 +318,7 @@ export default function AbsencesPage() {
           <div className="space-y-1">
             <label className="block text-sm font-medium text-gray-700">Observações</label>
             <textarea
-              className="block w-full rounded-md border border-gray-300 shadow-sm sm:text-sm px-3 py-2 bg-white focus:outline-none focus:border-[#836FFF] focus:ring-1 focus:ring-[#836FFF] text-gray-900"
+              className="block w-full rounded-md border border-gray-300 shadow-sm sm:text-sm px-3 py-2 bg-white focus:outline-none focus:border-[#1B365D] focus:ring-1 focus:ring-[#1B365D] text-gray-900"
               rows={3}
               value={editObservations}
               onChange={(e) => setEditObservations(e.target.value)}
@@ -330,7 +330,7 @@ export default function AbsencesPage() {
             <Button type="button" variant="secondary" onClick={() => setIsEditModalOpen(false)}>
               Cancelar
             </Button>
-            <Button type="submit" className="bg-[#F3E8FF] text-[#581C87] hover:bg-[#E9D5FF] border border-[#E9D5FF] font-semibold">
+            <Button type="submit" className="bg-[#E0F2FE] text-[#0369A1] hover:bg-[#BAE6FD] border border-[#BAE6FD] font-semibold">
               Salvar Alterações
             </Button>
           </div>

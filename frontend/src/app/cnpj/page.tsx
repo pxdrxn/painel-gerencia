@@ -105,7 +105,7 @@ export default function CnpjPage() {
         <Button
           size="sm"
           variant="outline"
-          className="gap-1.5 border-purple-200 text-[#836FFF] hover:bg-purple-50"
+          className="gap-1.5 border-sky-200 text-[#0369A1] hover:bg-sky-50"
           onClick={() => handleOpenModal(row)}
         >
           <FiEdit2 className="w-3.5 h-3.5" /> Editar CNPJ
@@ -199,7 +199,7 @@ export default function CnpjPage() {
             </Button>
             <Button
               type="submit"
-              className="bg-[#F3E8FF] text-[#581C87] hover:bg-[#E9D5FF] border border-[#E9D5FF] font-semibold"
+              className="bg-[#E0F2FE] text-[#0369A1] hover:bg-[#BAE6FD] border border-[#BAE6FD] font-semibold"
               loading={isSaving}
             >
               Salvar Alteração

@@ -130,8 +130,8 @@ export default function SaturdayScalePage() {
             className={cn(
               "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
               val === "largou_12h"
-                ? "bg-[#836FFF] text-white border-[#836FFF] shadow-sm"
-                : "bg-white text-[#836FFF] border-purple-200 hover:bg-purple-50"
+                ? "bg-[#0284C7] text-white border-[#0284C7] shadow-sm"
+                : "bg-white text-[#0284C7] border-sky-200 hover:bg-sky-50"
             )}
           >
             LARGOU DE MEIO DIA
@@ -262,7 +262,7 @@ export default function SaturdayScalePage() {
             </Button>
             <Button
               type="submit"
-              className="bg-[#F3E8FF] text-[#581C87] hover:bg-[#E9D5FF] border border-[#E9D5FF] font-semibold"
+              className="bg-[#E0F2FE] text-[#0369A1] hover:bg-[#BAE6FD] border border-[#BAE6FD] font-semibold"
               loading={isAdding}
               disabled={!isModalDateSaturday}
             >

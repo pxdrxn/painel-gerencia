@@ -11,7 +11,7 @@ export default function PageHeader({ title, subtitle, action }: PageHeaderProps)
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <div className="flex flex-col">
         <div className="flex items-center gap-3">
-          <div className="w-1.5 h-6 bg-[#836FFF] rounded-full"></div>
+          <div className="w-1.5 h-6 bg-[#1B365D] rounded-full"></div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
             {title}
           </h1>

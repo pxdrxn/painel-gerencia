@@ -131,7 +131,7 @@ export default function RescisionPage() {
         <Button
           size="sm"
           variant="outline"
-          className="gap-1.5 border-purple-200 text-[#836FFF] hover:bg-purple-50"
+          className="gap-1.5 border-sky-200 text-[#0369A1] hover:bg-sky-50"
           onClick={() => handleOpenModal(row)}
         >
           <FiEdit2 className="w-3.5 h-3.5" /> Informar Rescisão
@@ -213,15 +213,15 @@ export default function RescisionPage() {
             </div>
 
             {suggestedRescision && suggestedRescision.value > 0 && (
-              <div className="p-3 bg-purple-50 text-purple-900 border border-purple-100 rounded-md text-xs space-y-1.5 mt-2 animate-in fade-in duration-300">
-                <span className="font-semibold text-[#581C87]">Sugestão de Cálculo Automático:</span>
+              <div className="p-3 bg-sky-50 text-sky-900 border border-sky-100 rounded-md text-xs space-y-1.5 mt-2 animate-in fade-in duration-300">
+                <span className="font-semibold text-[#0369A1]">Sugestão de Cálculo Automático:</span>
                 <p className="text-gray-600">
                   Valor estimado: <span className="font-bold text-gray-900">{formatCurrency(suggestedRescision.value)}</span> (com base em {suggestedRescision.years} ano(s), {suggestedRescision.months} mês(es) e {suggestedRescision.days} dia(s) trabalhados a partir de {selectedEmployee.start_date ? 'Data de Início' : 'Data de Contratação'}).
                 </p>
                 <button
                   type="button"
                   onClick={() => setRescisionValue(suggestedRescision.value.toString())}
-                  className="mt-1 text-xs font-semibold text-[#836FFF] hover:text-[#705ae6] underline block focus:outline-none"
+                  className="mt-1 text-xs font-semibold text-[#0369A1] hover:text-[#0284C7] underline block focus:outline-none"
                 >
                   Aplicar Valor Sugerido
                 </button>
@@ -251,7 +251,7 @@ export default function RescisionPage() {
             </Button>
             <Button
               type="submit"
-              className="bg-[#F3E8FF] text-[#581C87] hover:bg-[#E9D5FF] border border-[#E9D5FF] font-semibold"
+              className="bg-[#E0F2FE] text-[#0369A1] hover:bg-[#BAE6FD] border border-[#BAE6FD] font-semibold"
               loading={isSaving}
             >
               Salvar Lançamento

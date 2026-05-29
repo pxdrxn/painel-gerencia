@@ -27,7 +27,7 @@ export default function DataTable({ columns, data, pagination, onPageChange, isL
         <div className="inline-block min-w-full align-middle">
           <div className="overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-[#836FFF]">
+              <thead className="bg-[#1B365D]">
                 <tr>
                   {columns.map((col) => (
                     <th
@@ -45,7 +45,7 @@ export default function DataTable({ columns, data, pagination, onPageChange, isL
                   <tr>
                     <td colSpan={columns.length} className="px-6 py-10 text-center text-sm text-gray-500">
                       <div className="flex items-center justify-center gap-2">
-                        <svg className="animate-spin h-5 w-5 text-[#836FFF]" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-5 w-5 text-[#1B365D]" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                         </svg>

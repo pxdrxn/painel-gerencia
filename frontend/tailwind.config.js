@@ -10,17 +10,17 @@ module.exports = {
     extend: {
       colors: {
         navy: {
-          50: "#f3f0ff",
-          100: "#e8e0ff",
-          200: "#d3c2ff",
-          300: "#b399ff",
-          400: "#997aff",
-          500: "#836FFF", // Violet-blue principal
-          600: "#705ae6",
-          700: "#836FFF",
-          800: "#5d4ca3",
-          900: "#836FFF",
-          950: "#3d3080",
+          50: "#F0F7FF",
+          100: "#E0F2FE",
+          200: "#BAE6FD",
+          300: "#7DD3FC",
+          400: "#38BDF8",
+          500: "#1B365D", // Azul escuro marinho
+          600: "#152A4A",
+          700: "#1B365D",
+          800: "#0F1E36",
+          900: "#0F1E36",
+          950: "#0A1424",
         },
       },
       fontFamily: {

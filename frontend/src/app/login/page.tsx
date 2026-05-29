@@ -30,12 +30,12 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 px-8 py-10 text-center">
-            <div className="w-16 h-16 bg-[#836FFF] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#836FFF]/30">
+          <div className="bg-gradient-to-br from-[#1B365D] to-[#0A1D37] px-8 py-10 text-center">
+            <div className="w-16 h-16 bg-[#1B365D] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#1B365D]/30">
               <span className="text-white text-2xl font-bold tracking-tight">SOS</span>
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">Painel de Gerência</h1>
-            <p className="text-purple-200 text-sm mt-2">Sistema Operacional S.O.S Crédito</p>
+            <p className="text-blue-200 text-sm mt-2">Sistema Operacional S.O.S Crédito</p>
           </div>
           
           <div className="p-8">
@@ -83,7 +83,7 @@ export default function LoginPage() {
               <div className="pt-2">
                 <Button 
                   type="submit" 
-                  className="w-full h-11 text-base shadow-md shadow-[#836FFF]/20"
+                  className="w-full h-11 text-base shadow-md shadow-sky-400/20"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Entrando..." : "Acessar Sistema"}
