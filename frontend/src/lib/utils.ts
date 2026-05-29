@@ -101,7 +101,7 @@ export function calculateRescisionValue(startDateStr: string | null | undefined,
 
   const yearVal = years * 1000;
   const monthVal = months * (1000 / 12);
-  const dayVal = days * (1000 / 12 / 30);
+  const dayVal = days * 2.77;
   const total = parseFloat((yearVal + monthVal + dayVal).toFixed(2));
 
   return { value: total, years, months, days };
