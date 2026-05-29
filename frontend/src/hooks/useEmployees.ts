@@ -24,6 +24,11 @@ export interface Employee {
   salary: number;
   status: string;
   observations?: string | null;
+  cnpj?: string | null;
+  rescision_value?: number | null;
+  rescision_type?: string | null;
+  rescision_status?: string | null;
+  rescision_notes?: string | null;
   absences?: number;
   medical_leaves?: number;
   available_unit_ids?: string[];

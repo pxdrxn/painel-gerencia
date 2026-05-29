@@ -117,22 +117,35 @@ export default function ProductionPage() {
         </div>
       )}
 
-      {summary && summary.growth_percentage !== null && (
-        <Card className="bg-purple-50/50 border-purple-100">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-[#5d4ca3] font-semibold">Crescimento Mensal Geral</h3>
-                <p className="text-sm text-purple-700">Somatória de todas as lojas em comparação ao mês anterior</p>
-              </div>
-              <div className="text-right">
-                <span className={`text-2xl font-bold ${summary.growth_percentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {summary.growth_percentage >= 0 ? '+' : ''}{summary.growth_percentage.toFixed(1)}%
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {summary && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="bg-purple-50/50 border-purple-100">
+            <CardContent className="p-4 flex flex-col justify-between h-full">
+              <span className="text-[#5d4ca3] text-sm font-semibold">Faturamento Total</span>
+              <span className="text-2xl font-bold text-gray-900 mt-2">{formatCurrency(summary.total_quantity)}</span>
+            </CardContent>
+          </Card>
+          <Card className="bg-purple-50/50 border-purple-100">
+            <CardContent className="p-4 flex flex-col justify-between h-full">
+              <span className="text-[#5d4ca3] text-sm font-semibold">Média por Loja</span>
+              <span className="text-2xl font-bold text-gray-900 mt-2">{formatCurrency(summary.average_per_unit)}</span>
+            </CardContent>
+          </Card>
+          <Card className="bg-purple-50/50 border-purple-100">
+            <CardContent className="p-4 flex flex-col justify-between h-full">
+              <span className="text-[#5d4ca3] text-sm font-semibold">Lojas Participantes</span>
+              <span className="text-2xl font-bold text-gray-900 mt-2">{summary.unit_count}</span>
+            </CardContent>
+          </Card>
+          <Card className="bg-purple-50/50 border-purple-100">
+            <CardContent className="p-4 flex flex-col justify-between h-full">
+              <span className="text-[#5d4ca3] text-sm font-semibold">Crescimento Mensal Geral</span>
+              <span className={`text-2xl font-bold mt-2 ${summary.growth_percentage === null ? 'text-gray-400 font-medium text-base' : summary.growth_percentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {summary.growth_percentage === null ? '—' : `${summary.growth_percentage >= 0 ? '+' : ''}${summary.growth_percentage.toFixed(1)}%`}
+              </span>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -141,7 +154,7 @@ export default function ProductionPage() {
           <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 pb-4">
             <CardTitle>Lançamento de Faturamento e Metas</CardTitle>
             <Button 
-              className="gap-2 bg-[#836FFF] hover:bg-[#705ae6] text-white shadow-sm focus:ring-[#836FFF]"
+              className="gap-2 bg-[#581C87] hover:bg-[#431466] text-white shadow-sm focus:ring-[#581C87]"
               onClick={handleSaveAll}
               disabled={isSaving || isLoading}
               loading={isSaving}

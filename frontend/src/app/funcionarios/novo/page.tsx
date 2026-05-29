@@ -19,6 +19,7 @@ export default function NewEmployeePage() {
   const [formData, setFormData] = useState({
     name: "",
     cpf: "",
+    cnpj: "",
     phone: "",
     email: "",
     position: "atendente",
@@ -44,11 +45,22 @@ export default function NewEmployeePage() {
     return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
   };
 
+  const formatCNPJInput = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+    if (digits.length <= 8) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
+    if (digits.length <= 12) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8)}`;
+    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12, 14)}`;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
     if (name === "cpf") {
       setFormData(prev => ({ ...prev, cpf: formatCPFInput(value) }));
+    } else if (name === "cnpj") {
+      setFormData(prev => ({ ...prev, cnpj: formatCNPJInput(value) }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -83,6 +95,7 @@ export default function NewEmployeePage() {
       await createEmployee({
         name: formData.name,
         cpf: null,
+        cnpj: formData.cnpj || null,
         phone: formData.phone || null,
         email: null,
         position: formData.position,
@@ -153,6 +166,14 @@ export default function NewEmployeePage() {
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="(11) 99999-9999"
+              />
+
+              <Input 
+                name="cnpj"
+                label="CNPJ"
+                value={formData.cnpj}
+                onChange={handleInputChange}
+                placeholder="00.000.000/0000-00"
               />
 
               <Select 

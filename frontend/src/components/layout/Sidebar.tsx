@@ -10,6 +10,7 @@ import {
   FiCheckSquare, 
   FiTrendingUp, 
   FiActivity,
+  FiFileText,
   FiLogOut
 } from "react-icons/fi";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { label: "Disponibilidade", href: "/disponibilidade", icon: FiCheckSquare },
   { label: "Folgas & Faltas", href: "/folgas", icon: FiActivity },
   { label: "Produção", href: "/producao", icon: FiTrendingUp },
+  { label: "Rescisões", href: "/rescisao", icon: FiFileText },
 ];
 
 export default function Sidebar() {

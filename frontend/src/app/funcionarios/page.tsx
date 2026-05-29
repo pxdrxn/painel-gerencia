@@ -46,16 +46,23 @@ export default function EmployeesPage() {
     { 
       key: "name", 
       label: "Nome",
-      render: (val: string) => <span className="font-medium text-gray-900">{val}</span>
+      render: (val: string, row: any) => {
+        const isInativo = row.status === "inativo" || !!row.termination_date;
+        return (
+          <span className={`font-semibold ${isInativo ? "text-red-600 font-bold" : "text-gray-900"}`}>
+            {val}
+          </span>
+        );
+      }
     },
     { key: "position", label: "Cargo", render: (val: string) => <Badge status={val} variant="role" /> },
-    { key: "status", label: "Status", render: (val: string) => <Badge status={val} /> },
+    { key: "status", label: "Status", render: (val: string, row: any) => <Badge status={row.termination_date ? "inativo" : val} /> },
     { key: "start_date", label: "Início", render: (val: string) => val ? formatDate(val) : "—" },
     { key: "hire_date", label: "Contratação", render: (val: string) => formatDate(val) },
     { key: "termination_date", label: "Demissão", render: (val: string) => val ? formatDate(val) : "—" },
     {
       key: "absences",
-      label: "Folgas",
+      label: "Falta",
       render: (val: number, row: any) => (
         <div className="flex items-center gap-1">
           <button
@@ -98,6 +105,11 @@ export default function EmployeesPage() {
           </button>
         </div>
       ),
+    },
+    {
+      key: "observations",
+      label: "Observações",
+      render: (val: string) => <span className="text-gray-600 text-xs max-w-[150px] truncate block" title={val}>{val || "—"}</span>
     },
     {
       key: "actions",
@@ -147,7 +159,7 @@ export default function EmployeesPage() {
                   { value: "", label: "Todos os Status" },
                   { value: "ativo", label: "Ativo" },
                   { value: "ferias", label: "Férias" },
-                  { value: "desligado", label: "Desligado" },
+                  { value: "inativo", label: "Inativo" },
                 ]}
                 value={filters.status || ""}
                 onChange={(e) => updateFilters({ status: e.target.value })}

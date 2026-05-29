@@ -42,6 +42,8 @@ class EmployeeService:
 
         emp_data = data.model_dump()
         emp_data["created_by"] = created_by
+        if data.termination_date:
+            emp_data["status"] = "inativo"
         return await self.repo.create(emp_data)
 
     async def update_employee(self, employee_id: UUID, data: EmployeeUpdate, updated_by: UUID) -> Employee:
@@ -57,6 +59,8 @@ class EmployeeService:
                 
         update_data = data.model_dump(exclude_unset=True)
         update_data["updated_by"] = updated_by
+        if data.termination_date:
+            update_data["status"] = "inativo"
 
         # Validar as unidades de disponibilidade
         if data.available_unit_ids is not None:

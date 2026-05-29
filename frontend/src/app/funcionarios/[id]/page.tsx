@@ -20,6 +20,7 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
   const [formData, setFormData] = useState({
     name: "",
     cpf: "",
+    cnpj: "",
     phone: "",
     email: "",
     position: "atendente",
@@ -44,6 +45,7 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
         setFormData({
           name: data.name || "",
           cpf: data.cpf || "",
+          cnpj: data.cnpj || "",
           phone: data.phone || "",
           email: data.email || "",
           position: data.position || "atendente",
@@ -64,9 +66,22 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
     fetchEmployeeDetails();
   }, [params.id]);
 
+  const formatCNPJInput = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+    if (digits.length <= 8) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
+    if (digits.length <= 12) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8)}`;
+    return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12, 14)}`;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === "cnpj") {
+      setFormData(prev => ({ ...prev, cnpj: formatCNPJInput(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
 
     if (errors[name]) {
       setErrors(prev => {
@@ -97,6 +112,7 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
       await updateEmployee(params.id, {
         name: formData.name,
         phone: formData.phone || null,
+        cnpj: formData.cnpj || null,
         position: formData.position,
         start_date: formData.start_date || null,
         hire_date: formData.hire_date,
@@ -184,6 +200,14 @@ export default function EmployeeDetailPage({ params }: { params: { id: string } 
                 label="Telefone / WhatsApp"
                 value={formData.phone}
                 onChange={handleInputChange}
+              />
+
+              <Input 
+                name="cnpj"
+                label="CNPJ"
+                value={formData.cnpj}
+                onChange={handleInputChange}
+                placeholder="00.000.000/0000-00"
               />
 
               <Select 

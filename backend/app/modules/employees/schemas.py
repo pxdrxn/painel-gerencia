@@ -12,18 +12,23 @@ from pydantic import BaseModel, field_validator
 class EmployeeCreate(BaseModel):
     """Dados para cadastrar um funcionário."""
     name: str
+    position: str  # atendente | panfletista | analista | gerente | supervisor
+    hire_date: date
     cpf: str | None = None
     phone: str | None = None
     email: str | None = None
-    position: str  # atendente | panfletista | analista | gerente | supervisor
     unit_id: UUID | None = None
     start_date: date | None = None
-    hire_date: date
     termination_date: date | None = None
     status: str = "ativo"
     observations: str | None = None
     absences: int = 0
     medical_leaves: int = 0
+    cnpj: str | None = None
+    rescision_value: float | None = None
+    rescision_type: str | None = None
+    rescision_status: str | None = None
+    rescision_notes: str | None = None
 
     @field_validator("cpf")
     @classmethod
@@ -85,6 +90,11 @@ class EmployeeUpdate(BaseModel):
     absences: int | None = None
     medical_leaves: int | None = None
     available_unit_ids: list[UUID] | None = None
+    cnpj: str | None = None
+    rescision_value: float | None = None
+    rescision_type: str | None = None
+    rescision_status: str | None = None
+    rescision_notes: str | None = None
 
     @field_validator("position")
     @classmethod
@@ -111,22 +121,27 @@ class EmployeeResponse(BaseModel):
     """Dados completos do funcionário."""
     id: UUID
     name: str
-    cpf: str | None
-    phone: str | None
-    email: str | None
     position: str
-    unit_id: UUID | None
+    hire_date: date
+    status: str
+    created_at: datetime
+    updated_at: datetime
+    cpf: str | None = None
+    phone: str | None = None
+    email: str | None = None
+    unit_id: UUID | None = None
     unit_name: str | None = None  # Populated via join
     start_date: date | None = None
-    hire_date: date
     termination_date: date | None = None
-    status: str
-    observations: str | None
+    observations: str | None = None
     absences: int = 0
     medical_leaves: int = 0
     available_unit_ids: list[str] = []
-    created_at: datetime
-    updated_at: datetime
+    cnpj: str | None = None
+    rescision_value: float | None = None
+    rescision_type: str | None = None
+    rescision_status: str | None = None
+    rescision_notes: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -135,17 +150,23 @@ class EmployeeListResponse(BaseModel):
     """Item da lista de funcionários (resumido para tabela)."""
     id: UUID
     name: str
-    cpf: str | None
     position: str
-    unit_id: UUID | None
     status: str
     hire_date: date
+    cpf: str | None = None
+    unit_id: UUID | None = None
     unit_name: str | None = None
     start_date: date | None = None
     termination_date: date | None = None
     absences: int = 0
     medical_leaves: int = 0
     available_unit_ids: list[str] = []
+    observations: str | None = None
+    cnpj: str | None = None
+    rescision_value: float | None = None
+    rescision_type: str | None = None
+    rescision_status: str | None = None
+    rescision_notes: str | None = None
 
     model_config = {"from_attributes": True}
 

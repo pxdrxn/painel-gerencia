@@ -65,13 +65,39 @@ export default function LineChart({ data, labels, title }: {
           weight: 'bold' as const,
         }
       },
+      tooltip: {
+        callbacks: {
+          label: function (context: any) {
+            let label = context.dataset.label || "";
+            if (label) {
+              label += ": ";
+            }
+            if (context.parsed.y !== null) {
+              label += new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(context.parsed.y);
+            }
+            return label;
+          },
+        },
+      },
     },
     scales: {
       y: {
         beginAtZero: true,
         grid: {
           color: '#f1f5f9',
-        }
+        },
+        ticks: {
+          callback: function (value: any) {
+            return new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+              maximumFractionDigits: 0,
+            }).format(value);
+          },
+        },
       },
       x: {
         grid: {

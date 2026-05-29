@@ -30,7 +30,7 @@ Relationships:
 import uuid
 from datetime import date
 
-from sqlalchemy import Date, ForeignKey, Integer, JSON, String, Text
+from sqlalchemy import Date, ForeignKey, Integer, JSON, String, Text, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -87,6 +87,21 @@ class Employee(Base, TimestampMixin, SoftDeleteMixin, AuditMixin):
     available_unit_ids: Mapped[list] = mapped_column(
         JSON, nullable=False, default=list
     )  # IDs das unidades onde o funcionário tem disponibilidade
+    cnpj: Mapped[str | None] = mapped_column(
+        String(18), nullable=True
+    )  # CNPJ do funcionário
+    rescision_value: Mapped[float | None] = mapped_column(
+        Numeric(10, 2), nullable=True
+    )  # Valor da rescisão
+    rescision_type: Mapped[str | None] = mapped_column(
+        String(50), nullable=True
+    )  # Tipo da rescisão
+    rescision_status: Mapped[str | None] = mapped_column(
+        String(20), nullable=True
+    )  # Status da rescisão (ex: pago, pendente)
+    rescision_notes: Mapped[str | None] = mapped_column(
+        Text, nullable=True
+    )  # Observações da rescisão
 
     # --- Relationships ---
     unit = relationship("Unit", back_populates="employees", foreign_keys=[unit_id], lazy="selectin")
