@@ -11,7 +11,7 @@ import Modal from "@/components/ui/Modal";
 import Select from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
 import { FiDollarSign, FiEdit2 } from "react-icons/fi";
-import { formatDate, formatCurrency } from "@/lib/utils";
+import { formatDate, formatCurrency, calculateRescisionValue } from "@/lib/utils";
 
 export default function RescisionPage() {
   const { employees, isLoading, updateEmployee, refetch } = useEmployees({ limit: 100 });
@@ -29,6 +29,14 @@ export default function RescisionPage() {
   const demittedEmployees = employees.filter(
     (emp) => emp.status === "inativo" || !!emp.termination_date
   );
+
+  const suggestedRescision = selectedEmployee
+    ? calculateRescisionValue(
+        selectedEmployee.start_date,
+        selectedEmployee.hire_date,
+        selectedEmployee.termination_date
+      )
+    : null;
 
   const handleOpenModal = (emp: any) => {
     setSelectedEmployee(emp);
@@ -203,6 +211,22 @@ export default function RescisionPage() {
                 onChange={(e) => setRescisionValue(e.target.value)}
               />
             </div>
+
+            {suggestedRescision && suggestedRescision.value > 0 && (
+              <div className="p-3 bg-purple-50 text-purple-900 border border-purple-100 rounded-md text-xs space-y-1.5 mt-2 animate-in fade-in duration-300">
+                <span className="font-semibold text-[#581C87]">Sugestão de Cálculo Automático:</span>
+                <p className="text-gray-600">
+                  Valor estimado: <span className="font-bold text-gray-900">{formatCurrency(suggestedRescision.value)}</span> (com base em {suggestedRescision.years} ano(s), {suggestedRescision.months} mês(es) e {suggestedRescision.days} dia(s) trabalhados a partir de {selectedEmployee.start_date ? 'Data de Início' : 'Data de Contratação'}).
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setRescisionValue(suggestedRescision.value.toString())}
+                  className="mt-1 text-xs font-semibold text-[#836FFF] hover:text-[#705ae6] underline block focus:outline-none"
+                >
+                  Aplicar Valor Sugerido
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="space-y-1">

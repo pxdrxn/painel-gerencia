@@ -70,3 +70,39 @@ export function getStatusColor(status: string): string {
   };
   return map[status.toLowerCase()] || "bg-gray-100 text-gray-800";
 }
+
+export function calculateRescisionValue(startDateStr: string | null | undefined, hireDateStr: string, terminationDateStr: string | null | undefined): { value: number; years: number; months: number; days: number } {
+  if (!terminationDateStr) return { value: 0, years: 0, months: 0, days: 0 };
+  
+  const startStr = startDateStr || hireDateStr;
+  if (!startStr) return { value: 0, years: 0, months: 0, days: 0 };
+
+  const start = new Date(startStr);
+  const end = new Date(terminationDateStr);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime()) || end < start) {
+    return { value: 0, years: 0, months: 0, days: 0 };
+  }
+
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+  let days = end.getDate() - start.getDate();
+
+  if (days < 0) {
+    const prevMonth = new Date(end.getFullYear(), end.getMonth(), 0);
+    days += prevMonth.getDate();
+    months -= 1;
+  }
+
+  if (months < 0) {
+    months += 12;
+    years -= 1;
+  }
+
+  const yearVal = years * 1000;
+  const monthVal = months * (1000 / 12);
+  const dayVal = days * (1000 / 12 / 30);
+  const total = parseFloat((yearVal + monthVal + dayVal).toFixed(2));
+
+  return { value: total, years, months, days };
+}

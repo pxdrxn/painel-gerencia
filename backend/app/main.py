@@ -30,6 +30,7 @@ from app.modules.production.router import router as production_router
 from app.modules.goals.router import router as goals_router
 from app.modules.dashboard.router import router as dashboard_router
 from app.modules.absences.router import router as absences_router
+from app.modules.saturday_scales.router import router as saturday_scales_router
 
 from app.middleware.error_handler import register_error_handlers
 from app.middleware.security_headers import SecurityHeadersMiddleware
@@ -91,6 +92,7 @@ def create_app() -> FastAPI:
     app.include_router(goals_router, prefix="/api/goals", tags=["Goals"])
     app.include_router(dashboard_router, prefix="/api/dashboard", tags=["Dashboard"])
     app.include_router(absences_router, prefix="/api/absences", tags=["Absences"])
+    app.include_router(saturday_scales_router, prefix="/api/saturday-scales", tags=["Saturday Scales"])
 
     @app.get("/api/health", tags=["Health"])
     async def health_check() -> dict:
