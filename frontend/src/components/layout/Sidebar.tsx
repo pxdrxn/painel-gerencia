@@ -48,8 +48,8 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       isCollapsed ? "w-20" : "w-64"
     )}>
       <div className={cn(
-        "p-6 border-b border-[#705ae6]/30 flex items-center justify-between gap-2",
-        isCollapsed ? "px-4 justify-center" : ""
+        "p-6 border-b border-[#705ae6]/30 flex items-center gap-2",
+        isCollapsed ? "px-4 justify-center" : "justify-between"
       )}>
         {!isCollapsed && (
           <div className="flex flex-col gap-1">
@@ -61,9 +61,6 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
               Controle Gerencial
             </span>
           </div>
-        )}
-        {isCollapsed && (
-          <h1 className="text-xl font-black text-white tracking-tighter">SOS</h1>
         )}
         <button
           onClick={onToggle}
