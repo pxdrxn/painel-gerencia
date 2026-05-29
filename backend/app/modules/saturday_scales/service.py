@@ -55,8 +55,10 @@ class SaturdayScaleService:
         await self.db.delete(scale)
         await self.db.flush()
 
-    async def list_saturday_scale(self, date_val: date) -> list[dict]:
-        """Lista os funcionários escalados no sábado informado."""
-        if date_val.weekday() != 5:
-            raise BusinessRuleException("A data informada deve ser um sábado")
-        return await self.repo.list_by_date(date_val)
+    async def list_saturday_scale(self, date_val: date | None) -> list[dict]:
+        """Lista os funcionários escalados no sábado informado ou todos se None."""
+        if date_val:
+            if date_val.weekday() != 5:
+                raise BusinessRuleException("A data informada deve ser um sábado")
+            return await self.repo.list_by_date(date_val)
+        return await self.repo.list_all()

@@ -18,7 +18,7 @@ router = APIRouter()
 
 @router.get("", response_model=ApiResponse)
 async def list_saturday_scale(
-    date: date = Query(..., description="Data do sábado a ser consultado (YYYY-MM-DD)"),
+    date: date | None = Query(None, description="Data do sábado a ser consultado (YYYY-MM-DD)"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ) -> dict:

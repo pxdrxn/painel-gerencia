@@ -56,3 +56,35 @@ class SaturdayScaleRepository(BaseRepository[SaturdayScale]):
                 "created_at": scale.created_at,
             })
         return data
+
+    async def list_all(self) -> list[dict]:
+        """
+        Lista todas as alocações da escala de sábado (todas as datas),
+        incluindo nome do colaborador, cargo e nome da unidade, ordenados por data desc.
+        """
+        query = (
+            select(
+                SaturdayScale,
+                Employee.name.label("employee_name"),
+                Employee.position.label("employee_position"),
+                Unit.name.label("unit_name")
+            )
+            .join(Employee, SaturdayScale.employee_id == Employee.id)
+            .outerjoin(Unit, Employee.unit_id == Unit.id)
+            .order_by(SaturdayScale.date.desc(), Employee.name.asc())
+        )
+        result = await self.db.execute(query)
+        
+        data = []
+        for scale, emp_name, emp_pos, unit_name in result.all():
+            data.append({
+                "id": scale.id,
+                "employee_id": scale.employee_id,
+                "employee_name": emp_name,
+                "employee_position": emp_pos,
+                "unit_name": unit_name or "Sem Unidade",
+                "date": scale.date,
+                "action": scale.action,
+                "created_at": scale.created_at,
+            })
+        return data

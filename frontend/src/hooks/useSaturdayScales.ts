@@ -10,18 +10,20 @@ export interface SaturdayScaleEntry {
   employee_position: string;
   unit_name: string;
   date: string;
-  action: "folgou" | "largou_12h";
+  action: "folgou" | "largou_12h" | "pendente";
 }
 
 export function useSaturdayScales() {
   const [scales, setScales] = useState<SaturdayScaleEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchScales = useCallback(async (dateStr: string) => {
-    if (!dateStr) return;
+  const fetchScales = useCallback(async (dateStr?: string) => {
     setIsLoading(true);
     try {
-      const res = await api.get<SaturdayScaleEntry[]>("/api/saturday-scales", { date: dateStr });
+      const params: any = {};
+      if (dateStr) params.date = dateStr;
+      
+      const res = await api.get<SaturdayScaleEntry[]>("/api/saturday-scales", params);
       setScales(res.data || []);
     } catch (e) {
       console.error("Error fetching Saturday scales:", e);
@@ -31,17 +33,22 @@ export function useSaturdayScales() {
     }
   }, []);
 
-  const addEmployeeToScale = async (employeeId: string, dateStr: string, action: "folgou" | "largou_12h" = "largou_12h") => {
+  const addEmployeeToScale = async (
+    employeeId: string,
+    dateStr: string,
+    action: "folgou" | "largou_12h" | "pendente" = "pendente",
+    currentFilterDate?: string
+  ) => {
     const res = await api.post<{ id: string }>("/api/saturday-scales", {
       employee_id: employeeId,
       date: dateStr,
       action: action,
     });
-    await fetchScales(dateStr);
+    await fetchScales(currentFilterDate);
     return res.data;
   };
 
-  const updateScaleAction = async (scaleId: string, dateStr: string, action: "folgou" | "largou_12h") => {
+  const updateScaleAction = async (scaleId: string, dateStr: string | undefined, action: "folgou" | "largou_12h" | "pendente") => {
     const res = await api.patch<{ id: string }>(`/api/saturday-scales/${scaleId}`, {
       action: action,
     });
@@ -49,7 +56,7 @@ export function useSaturdayScales() {
     return res.data;
   };
 
-  const removeEmployeeFromScale = async (scaleId: string, dateStr: string) => {
+  const removeEmployeeFromScale = async (scaleId: string, dateStr: string | undefined) => {
     const res = await api.delete<void>(`/api/saturday-scales/${scaleId}`);
     await fetchScales(dateStr);
     return res.data;

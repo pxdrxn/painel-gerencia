@@ -10,8 +10,8 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import Select from "@/components/ui/Select";
-import { FiPlus, FiTrash2, FiAlertCircle } from "react-icons/fi";
-import { cn } from "@/lib/utils";
+import { FiPlus, FiTrash2, FiAlertCircle, FiX } from "react-icons/fi";
+import { cn, formatDate } from "@/lib/utils";
 
 // Helper to get the nearest upcoming Saturday date
 const getNearestSaturday = () => {
@@ -25,37 +25,37 @@ const getNearestSaturday = () => {
 };
 
 export default function SaturdayScalePage() {
-  const [selectedDate, setSelectedDate] = useState(getNearestSaturday());
+  const [selectedDate, setSelectedDate] = useState(""); // empty means show all Saturdays
   const { scales, isLoading, fetchScales, addEmployeeToScale, updateScaleAction, removeEmployeeFromScale } = useSaturdayScales();
   const { employees, isLoading: loadingEmployees } = useEmployees({ limit: 100 });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalDate, setModalDate] = useState(getNearestSaturday());
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
-  const [selectedAction, setSelectedAction] = useState<"folgou" | "largou_12h">("largou_12h");
   const [isAdding, setIsAdding] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const selectedDateObj = new Date(selectedDate + "T12:00:00");
-  const isSaturday = selectedDateObj.getDay() === 6;
+  const modalDateObj = new Date(modalDate + "T12:00:00");
+  const isModalDateSaturday = modalDateObj.getDay() === 6;
 
   useEffect(() => {
-    if (isSaturday) {
-      fetchScales(selectedDate);
-    }
-  }, [selectedDate, fetchScales, isSaturday]);
+    fetchScales(selectedDate || undefined);
+  }, [selectedDate, fetchScales]);
 
-  const handleUpdateAction = async (scaleId: string, action: "folgou" | "largou_12h") => {
+  const handleUpdateAction = async (scaleId: string, currentAction: string, action: "folgou" | "largou_12h") => {
+    // If the user clicks the active action, toggle it back to "pendente"
+    const newAction = currentAction === action ? "pendente" : action;
     try {
-      await updateScaleAction(scaleId, selectedDate, action);
+      await updateScaleAction(scaleId, selectedDate || undefined, newAction);
     } catch (e) {
       console.error(e);
     }
   };
 
   const handleRemove = async (scaleId: string) => {
-    if (confirm("Deseja realmente remover este funcionário desta escala de sábado?")) {
+    if (confirm("Deseja realmente remover este colaborador desta escala de sábado?")) {
       try {
-        await removeEmployeeFromScale(scaleId, selectedDate);
+        await removeEmployeeFromScale(scaleId, selectedDate || undefined);
       } catch (e) {
         console.error(e);
       }
@@ -64,8 +64,12 @@ export default function SaturdayScalePage() {
 
   const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isModalDateSaturday) {
+      setErrorMsg("A data da escala deve ser obrigatoriamente um sábado.");
+      return;
+    }
     if (!selectedEmployeeId) {
-      setErrorMsg("Selecione um funcionário.");
+      setErrorMsg("Selecione um colaborador.");
       return;
     }
 
@@ -73,27 +77,32 @@ export default function SaturdayScalePage() {
     setErrorMsg("");
 
     try {
-      await addEmployeeToScale(selectedEmployeeId, selectedDate, selectedAction);
+      await addEmployeeToScale(selectedEmployeeId, modalDate, "pendente", selectedDate || undefined);
       setIsModalOpen(false);
       setSelectedEmployeeId("");
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.message || "Erro ao adicionar funcionário na escala.");
+      setErrorMsg(err.message || "Erro ao adicionar colaborador na escala.");
     } finally {
       setIsAdding(false);
     }
   };
 
-  // Filter out employees already on this Saturday's scale and only keep active employees
+  // Filter out employees already on the target Saturday scale and keep active employees
   const availableEmployees = employees.filter(
-    (emp) => emp.status === "ativo" && !scales.some((s) => s.employee_id === emp.id)
+    (emp) => emp.status === "ativo" && !scales.some((s) => s.employee_id === emp.id && s.date === modalDate)
   );
 
   const columns = [
     {
+      key: "date",
+      label: "Data",
+      render: (val: string) => <span className="font-semibold text-gray-700">{formatDate(val)}</span>,
+    },
+    {
       key: "employee_name",
       label: "Colaborador",
-      render: (val: string) => <span className="font-semibold text-gray-900">{val}</span>,
+      render: (val: string) => <span className="font-bold text-gray-900">{val}</span>,
     },
     {
       key: "employee_position",
@@ -101,17 +110,12 @@ export default function SaturdayScalePage() {
       render: (val: string) => <Badge status={val} variant="role" />,
     },
     {
-      key: "unit_name",
-      label: "Unidade Principal",
-      render: (val: string) => <span className="text-gray-700 font-medium">{val}</span>,
-    },
-    {
       key: "action",
       label: "Escala do Sábado",
       render: (val: string, row: any) => (
         <div className="flex items-center gap-2">
           <button
-            onClick={() => handleUpdateAction(row.id, "folgou")}
+            onClick={() => handleUpdateAction(row.id, val, "folgou")}
             className={cn(
               "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
               val === "folgou"
@@ -122,7 +126,7 @@ export default function SaturdayScalePage() {
             FOLGOU
           </button>
           <button
-            onClick={() => handleUpdateAction(row.id, "largou_12h")}
+            onClick={() => handleUpdateAction(row.id, val, "largou_12h")}
             className={cn(
               "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
               val === "largou_12h"
@@ -130,7 +134,7 @@ export default function SaturdayScalePage() {
                 : "bg-white text-[#836FFF] border-purple-200 hover:bg-purple-50"
             )}
           >
-            LARGOU DE 12:00
+            LARGOU DE MEIO DIA
           </button>
         </div>
       ),
@@ -156,44 +160,53 @@ export default function SaturdayScalePage() {
         title="Escala de Sábados"
         subtitle="Gerenciamento operacional de horários e folgas exclusivo para sábados"
         action={
-          isSaturday && (
-            <Button className="gap-2" onClick={() => setIsModalOpen(true)}>
-              <FiPlus /> Adicionar Colaborador
-            </Button>
-          )
+          <Button className="gap-2" onClick={() => setIsModalOpen(true)}>
+            <FiPlus /> Adicionar Colaborador
+          </Button>
         }
       />
 
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-        <div className="space-y-1">
-          <label className="block text-xs font-bold text-gray-500 uppercase">Selecione o Sábado</label>
-          <input
-            type="date"
-            className="block rounded-lg border border-gray-300 shadow-sm sm:text-sm px-3 py-2 bg-white focus:outline-none focus:border-[#836FFF] focus:ring-1 focus:ring-[#836FFF] text-gray-900 font-medium"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-          />
+        <div className="flex items-center gap-3">
+          <div className="space-y-1">
+            <label className="block text-xs font-bold text-gray-500 uppercase">Filtrar por Sábado</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                className="block rounded-lg border border-gray-300 shadow-sm sm:text-sm px-3 py-2 bg-white focus:outline-none focus:border-[#836FFF] focus:ring-1 focus:ring-[#836FFF] text-gray-900 font-medium"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+              />
+              {selectedDate && (
+                <button
+                  onClick={() => setSelectedDate("")}
+                  className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors flex items-center justify-center"
+                  title="Mostrar todos os sábados"
+                >
+                  <FiX className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
-        {!isSaturday && (
+        {selectedDate && (new Date(selectedDate + "T12:00:00")).getDay() !== 6 && (
           <div className="flex items-center gap-2 p-3 bg-amber-50 text-amber-800 border border-amber-100 rounded-lg">
             <FiAlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
-            <span className="text-sm font-medium">A data selecionada não é um sábado. Escolha um sábado para gerenciar a escala.</span>
+            <span className="text-sm font-medium">A data filtrada não é um sábado.</span>
           </div>
         )}
       </div>
 
-      {isSaturday && (
-        <Card>
-          <CardContent className="p-0">
-            <DataTable
-              columns={columns}
-              data={scales}
-              isLoading={isLoading}
-            />
-          </CardContent>
-        </Card>
-      )}
+      <Card>
+        <CardContent className="p-0">
+          <DataTable
+            columns={columns}
+            data={scales}
+            isLoading={isLoading}
+          />
+        </CardContent>
+      </Card>
 
       <Modal
         isOpen={isModalOpen}
@@ -208,10 +221,24 @@ export default function SaturdayScalePage() {
           )}
 
           <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">Data do Sábado *</label>
+            <input
+              type="date"
+              className="block w-full rounded-lg border border-gray-300 shadow-sm sm:text-sm px-3 py-2 bg-white focus:outline-none focus:border-[#836FFF] focus:ring-1 focus:ring-[#836FFF] text-gray-900 font-medium"
+              value={modalDate}
+              onChange={(e) => setModalDate(e.target.value)}
+              required
+            />
+            {!isModalDateSaturday && (
+              <p className="text-xs text-red-600 font-semibold mt-1">A data selecionada não cai em um sábado!</p>
+            )}
+          </div>
+
+          <div className="space-y-1">
             <label className="block text-sm font-medium text-gray-700">Colaborador Ativo *</label>
             <Select
               options={[
-                { value: "", label: "Selecione um funcionário..." },
+                { value: "", label: "Selecione um colaborador..." },
                 ...availableEmployees.map((emp) => ({
                   value: emp.id,
                   label: `${emp.name} (${emp.position})`,
@@ -220,19 +247,6 @@ export default function SaturdayScalePage() {
               value={selectedEmployeeId}
               onChange={(e) => setSelectedEmployeeId(e.target.value)}
               disabled={loadingEmployees}
-              required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Ação Inicial *</label>
-            <Select
-              options={[
-                { value: "largou_12h", label: "LARGOU DE 12:00" },
-                { value: "folgou", label: "FOLGOU" },
-              ]}
-              value={selectedAction}
-              onChange={(e) => setSelectedAction(e.target.value as any)}
               required
             />
           </div>
@@ -250,6 +264,7 @@ export default function SaturdayScalePage() {
               type="submit"
               className="bg-[#F3E8FF] text-[#581C87] hover:bg-[#E9D5FF] border border-[#E9D5FF] font-semibold"
               loading={isAdding}
+              disabled={!isModalDateSaturday}
             >
               Confirmar
             </Button>
