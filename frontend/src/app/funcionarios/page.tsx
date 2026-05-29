@@ -46,17 +46,30 @@ export default function EmployeesPage() {
     { 
       key: "name", 
       label: "Nome",
-      render: (val: string, row: any) => {
-        const isInativo = row.status === "inativo" || !!row.termination_date;
+      render: (val: string) => {
         return (
-          <span className={`font-semibold ${isInativo ? "text-red-600 font-bold" : "text-gray-900"}`}>
+          <span className="font-semibold text-gray-900">
             {val}
           </span>
         );
       }
     },
     { key: "position", label: "Cargo", render: (val: string) => <Badge status={val} variant="role" /> },
-    { key: "status", label: "Status", render: (val: string, row: any) => <Badge status={row.termination_date ? "inativo" : val} /> },
+    { 
+      key: "status", 
+      label: "Status", 
+      render: (val: string, row: any) => {
+        const isCurrentlyInativo = val === "inativo" || !!row.termination_date;
+        if (isCurrentlyInativo) {
+          return (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-600 border border-red-200 uppercase tracking-wider">
+              Inativo
+            </span>
+          );
+        }
+        return <Badge status={val} />;
+      }
+    },
     { key: "start_date", label: "Início", render: (val: string) => val ? formatDate(val) : "—" },
     { key: "hire_date", label: "Contratação", render: (val: string) => formatDate(val) },
     { key: "termination_date", label: "Demissão", render: (val: string) => val ? formatDate(val) : "—" },
