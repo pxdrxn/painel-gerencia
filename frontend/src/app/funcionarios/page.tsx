@@ -122,7 +122,7 @@ export default function EmployeesPage() {
     {
       key: "observations",
       label: "Observações",
-      render: (val: string) => <span className="text-gray-600 text-xs max-w-[220px] whitespace-normal break-words block">{val || "—"}</span>
+      render: (val: string) => <span className="text-gray-600 text-xs max-w-[250px] truncate block" title={val}>{val || "—"}</span>
     },
     {
       key: "actions",

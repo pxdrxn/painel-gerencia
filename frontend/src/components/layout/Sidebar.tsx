@@ -8,9 +8,10 @@ import {
   FiHome, 
   FiCalendar, 
   FiCheckSquare, 
-  FiTrendingUp, 
   FiActivity,
+  FiTrendingUp, 
   FiFileText,
+  FiBriefcase,
   FiLogOut
 } from "react-icons/fi";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,6 +20,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: FiPieChart },
   { label: "Funcionários", href: "/funcionarios", icon: FiUsers },
+  { label: "CNPJ", href: "/cnpj", icon: FiBriefcase },
   { label: "Unidades", href: "/unidades", icon: FiHome },
   { label: "Férias", href: "/ferias", icon: FiCalendar },
   { label: "Disponibilidade", href: "/disponibilidade", icon: FiCheckSquare },

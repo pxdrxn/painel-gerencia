@@ -154,7 +154,7 @@ export default function ProductionPage() {
           <CardHeader className="flex flex-row items-center justify-between border-b border-gray-100 pb-4">
             <CardTitle>Lançamento de Faturamento e Metas</CardTitle>
             <Button 
-              className="gap-2 bg-[#581C87] hover:bg-[#431466] text-white shadow-sm focus:ring-[#581C87]"
+              className="gap-2 bg-[#836FFF] hover:bg-[#705ae6] text-white shadow-sm focus:ring-[#836FFF] border-0"
               onClick={handleSaveAll}
               disabled={isSaving || isLoading}
               loading={isSaving}
