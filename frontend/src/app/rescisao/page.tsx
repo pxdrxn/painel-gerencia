@@ -111,7 +111,7 @@ export default function RescisionPage() {
       key: "rescision_notes",
       label: "Observações",
       render: (val: string) => (
-        <span className="text-gray-500 text-xs max-w-[180px] truncate block" title={val}>
+        <span className="text-gray-500 text-xs max-w-[220px] whitespace-normal break-words block">
           {val || "—"}
         </span>
       ),
