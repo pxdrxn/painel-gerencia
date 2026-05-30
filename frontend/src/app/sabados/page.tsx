@@ -133,8 +133,8 @@ export default function SaturdayScalePage() {
               className={cn(
                 "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
                 val === "largou_12h"
-                  ? "bg-[#0284C7] text-white border-[#0284C7] shadow-sm"
-                  : "bg-white text-[#0284C7] border-sky-200 hover:bg-sky-50"
+                  ? "bg-[#E0F2FE] text-[#0369A1] border-[#BAE6FD] shadow-sm"
+                  : "bg-white text-[#0369A1] border-sky-200 hover:bg-sky-50"
               )}
             >
               LARGOU DE MEIO DIA
