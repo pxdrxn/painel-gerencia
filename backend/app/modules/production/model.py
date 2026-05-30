@@ -16,7 +16,7 @@ Constraints:
 
 import uuid
 
-from sqlalchemy import ForeignKey, Integer, Text, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, Numeric, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -44,8 +44,8 @@ class MonthlyProduction(Base, TimestampMixin):
     month: Mapped[int] = mapped_column(
         Integer, nullable=False
     )  # 1-12
-    quantity: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0
+    quantity: Mapped[float] = mapped_column(
+        Numeric(precision=15, scale=2), nullable=False, default=0.0
     )
     observations: Mapped[str | None] = mapped_column(
         Text, nullable=True

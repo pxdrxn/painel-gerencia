@@ -39,13 +39,13 @@ class ProductionRepository(BaseRepository[MonthlyProduction]):
         result = await self.db.execute(query)
         return result.scalars().first()
 
-    async def get_monthly_total(self, year, month) -> int:
+    async def get_monthly_total(self, year, month) -> float:
         query = select(func.sum(MonthlyProduction.quantity)).where(
             MonthlyProduction.year == year,
             MonthlyProduction.month == month
         )
         result = await self.db.execute(query)
-        return result.scalar() or 0
+        return float(result.scalar() or 0.0)
 
     async def get_unit_count_in_month(self, year, month) -> int:
         query = select(func.count(MonthlyProduction.id)).where(
@@ -61,7 +61,8 @@ class ProductionRepository(BaseRepository[MonthlyProduction]):
             select(
                 MonthlyProduction.unit_id,
                 Unit.name.label("unit_name"),
-                MonthlyProduction.quantity
+                MonthlyProduction.quantity,
+                MonthlyProduction.observations
             )
             .join(Unit, MonthlyProduction.unit_id == Unit.id)
             .where(
@@ -79,7 +80,8 @@ class ProductionRepository(BaseRepository[MonthlyProduction]):
                 "position": i,
                 "unit_id": row.unit_id,
                 "unit_name": row.unit_name,
-                "quantity": row.quantity
+                "quantity": float(row.quantity),
+                "observations": row.observations
             })
         return ranking
 

@@ -14,7 +14,7 @@ class ProductionCreate(BaseModel):
     unit_id: UUID
     year: int
     month: int
-    quantity: int
+    quantity: float
     observations: str | None = None
 
     @field_validator("month")
@@ -27,7 +27,7 @@ class ProductionCreate(BaseModel):
 
 class ProductionUpdate(BaseModel):
     """Dados para editar produção (opcionais)."""
-    quantity: int | None = None
+    quantity: float | None = None
     observations: str | None = None
 
 
@@ -38,7 +38,7 @@ class ProductionResponse(BaseModel):
     unit_name: str | None = None
     year: int
     month: int
-    quantity: int
+    quantity: float
     observations: str | None
     created_at: datetime
 
@@ -50,14 +50,15 @@ class ProductionRanking(BaseModel):
     position: int
     unit_id: UUID
     unit_name: str
-    quantity: int
+    quantity: float
+    observations: str | None = None
 
 
 class ProductionSummary(BaseModel):
     """Resumo mensal de produção (para dashboard)."""
     year: int
     month: int
-    total_quantity: int
+    total_quantity: float
     unit_count: int
     average_per_unit: float
     growth_percentage: float | None = None  # vs mês anterior
@@ -67,5 +68,5 @@ class MonthComparison(BaseModel):
     """Comparação de produção entre meses."""
     year: int
     month: int
-    total: int
+    total: float
     growth_pct: float | None = None

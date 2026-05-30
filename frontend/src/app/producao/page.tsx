@@ -10,7 +10,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import LineChart from "@/components/charts/LineChart";
 import { FiCheckCircle, FiSave } from "react-icons/fi";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatBRLInput, parseBRLFloat } from "@/lib/utils";
 
 const MONTHS = [
   { value: "1", label: "Janeiro" }, { value: "2", label: "Fevereiro" },
@@ -31,6 +31,7 @@ export default function ProductionPage() {
 
   const [localQuantities, setLocalQuantities] = useState<{ [unitId: string]: string }>({});
   const [localGoals, setLocalGoals] = useState<{ [unitId: string]: string }>({});
+  const [localDaily, setLocalDaily] = useState<{ [unitId: string]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -41,27 +42,37 @@ export default function ProductionPage() {
       const initialGoal: { [unitId: string]: string } = {};
       units.forEach(u => {
         const foundQty = ranking.find(r => r.unit_id === u.id);
-        initialQty[u.id] = foundQty ? foundQty.quantity.toString() : "0";
+        const qtyVal = foundQty ? foundQty.quantity : 0;
+        initialQty[u.id] = formatBRLInput((qtyVal * 100).toFixed(0)) || "0,00";
 
         const foundGoal = goals.find(g => g.unit_id === u.id);
-        initialGoal[u.id] = foundGoal ? foundGoal.target_value.toString() : "0";
+        const goalVal = foundGoal ? parseFloat(foundGoal.target_value) : 0;
+        initialGoal[u.id] = formatBRLInput((goalVal * 100).toFixed(0)) || "0,00";
       });
       setLocalQuantities(initialQty);
       setLocalGoals(initialGoal);
+      setLocalDaily({});
     }
   }, [ranking, goals, units]);
 
   const handleQuantityChange = (unitId: string, val: string) => {
     setLocalQuantities(prev => ({
       ...prev,
-      [unitId]: val
+      [unitId]: formatBRLInput(val)
     }));
   };
 
   const handleGoalChange = (unitId: string, val: string) => {
     setLocalGoals(prev => ({
       ...prev,
-      [unitId]: val
+      [unitId]: formatBRLInput(val)
+    }));
+  };
+
+  const handleDailyChange = (unitId: string, val: string) => {
+    setLocalDaily(prev => ({
+      ...prev,
+      [unitId]: formatBRLInput(val)
     }));
   };
 
@@ -70,12 +81,32 @@ export default function ProductionPage() {
     setShowSuccess(false);
     try {
       for (const unitId of Object.keys(localQuantities)) {
-        const qty = parseInt(localQuantities[unitId]) || 0;
-        const targetVal = parseFloat(localGoals[unitId]) || 0;
-        await saveProduction(unitId, qty, `Faturamento lançado pelo administrador em ${month}/${year}`);
+        const currentQty = parseBRLFloat(localQuantities[unitId]);
+        const dailyQty = parseBRLFloat(localDaily[unitId] || "0");
+        const targetVal = parseBRLFloat(localGoals[unitId]);
+
+        const foundQty = ranking.find(r => r.unit_id === unitId);
+        const originalQty = foundQty ? foundQty.quantity : 0;
+
+        // O novo faturamento total é a soma do faturamento acumulado atual + o valor diário inserido
+        const newQty = currentQty + dailyQty;
+
+        let obs = foundQty?.observations || "";
+        if (dailyQty > 0) {
+          const today = new Date().toLocaleDateString("pt-BR");
+          const logLine = `[${today}] Lançamento diário de +R$ ${formatBRLInput((dailyQty * 100).toFixed(0))}`;
+          obs = obs ? `${obs}\n${logLine}` : logLine;
+        } else if (currentQty !== originalQty) {
+          const today = new Date().toLocaleDateString("pt-BR");
+          const logLine = `[${today}] Ajuste manual para R$ ${formatBRLInput((currentQty * 100).toFixed(0))}`;
+          obs = obs ? `${obs}\n${logLine}` : logLine;
+        }
+
+        await saveProduction(unitId, newQty, obs || undefined);
         await saveGoal(unitId, targetVal);
       }
       await refetch();
+      setLocalDaily({});
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (err) {
@@ -167,38 +198,79 @@ export default function ProductionPage() {
               <div className="p-8 text-center text-gray-500">Carregando lojas...</div>
             ) : (
               <div className="divide-y divide-gray-100">
-                {units.map((unit) => (
-                  <div key={unit.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4 hover:bg-gray-50/50 transition-colors">
-                    <div>
-                      <span className="font-semibold text-gray-900 block">{unit.name}</span>
-                      <span className="text-xs text-gray-400">Telefone: {unit.phone || "-"}</span>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-400 text-xs font-semibold uppercase">Meta: R$</span>
-                        <Input 
-                          type="number"
-                          min="0"
-                          placeholder="0.00"
-                          className="w-28 text-right pr-2 font-medium"
-                          value={localGoals[unit.id] ?? "0"}
-                          onChange={(e) => handleGoalChange(unit.id, e.target.value)}
-                        />
+                {units.map((unit) => {
+                  const foundQty = ranking.find(r => r.unit_id === unit.id);
+                  const logs = foundQty?.observations ? foundQty.observations.split("\n").filter(Boolean) : [];
+                  
+                  return (
+                    <div key={unit.id} className="p-4 hover:bg-gray-50/50 transition-colors border-b border-gray-100 last:border-b-0 space-y-3">
+                      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+                        <div className="min-w-[120px]">
+                          <span className="font-bold text-gray-900 block">{unit.name}</span>
+                          <span className="text-xs text-gray-400">Telefone: {unit.phone || "-"}</span>
+                        </div>
+                        
+                        <div className="flex flex-wrap items-center gap-4">
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-400 text-xs font-semibold uppercase">Meta: R$</span>
+                            <Input 
+                              type="text"
+                              placeholder="0,00"
+                              className="w-28 text-right font-medium text-gray-800"
+                              value={localGoals[unit.id] ?? ""}
+                              onChange={(e) => handleGoalChange(unit.id, e.target.value)}
+                            />
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-400 text-xs font-semibold uppercase">Acumulado: R$</span>
+                            <Input 
+                              type="text"
+                              placeholder="0,00"
+                              className="w-32 text-right font-semibold text-gray-900 bg-gray-50/50"
+                              value={localQuantities[unit.id] ?? ""}
+                              onChange={(e) => handleQuantityChange(unit.id, e.target.value)}
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <span className="text-sky-600 text-xs font-bold uppercase">Mais (+): R$</span>
+                            <Input 
+                              type="text"
+                              placeholder="0,00"
+                              className="w-28 text-right font-bold text-sky-700 border-sky-200 focus:border-sky-500 focus:ring-sky-500 placeholder-sky-300"
+                              value={localDaily[unit.id] ?? ""}
+                              onChange={(e) => handleDailyChange(unit.id, e.target.value)}
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-400 text-xs font-semibold uppercase">Faturamento: R$</span>
-                        <Input 
-                          type="number"
-                          min="0"
-                          placeholder="0.00"
-                          className="w-28 text-right pr-2 font-medium"
-                          value={localQuantities[unit.id] ?? "0"}
-                          onChange={(e) => handleQuantityChange(unit.id, e.target.value)}
-                        />
-                      </div>
+
+                      {/* Display preview if there is a daily amount typed */}
+                      {localDaily[unit.id] && (
+                        <div className="text-xs font-semibold text-sky-600 pl-1 animate-in fade-in duration-300">
+                          Preview: Novo Total do Mês: R$ {formatBRLInput((
+                            (parseBRLFloat(localQuantities[unit.id] || 0) + parseBRLFloat(localDaily[unit.id] || 0)) * 100
+                          ).toFixed(0))}
+                        </div>
+                      )}
+
+                      {/* Expandable release logs for the store */}
+                      {logs.length > 0 && (
+                        <div className="bg-slate-50 rounded-lg p-2.5 text-xs text-gray-600 border border-slate-100 space-y-1">
+                          <span className="font-bold text-gray-700 block mb-1">Histórico de Lançamentos Diários:</span>
+                          <div className="max-h-24 overflow-y-auto space-y-0.5 divide-y divide-slate-100 font-mono">
+                            {logs.map((log, idx) => (
+                              <div key={idx} className="py-0.5 text-[11px] text-gray-600">
+                                {log}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </CardContent>

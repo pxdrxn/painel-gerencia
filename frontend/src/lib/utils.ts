@@ -106,3 +106,21 @@ export function calculateRescisionValue(startDateStr: string | null | undefined,
 
   return { value: total, years, months, days };
 }
+
+export function formatBRLInput(value: string): string {
+  if (value === undefined || value === null) return "";
+  const cleaned = value.replace(/\D/g, "");
+  if (!cleaned) return "";
+  const num = parseFloat(cleaned) / 100;
+  return new Intl.NumberFormat("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(num);
+}
+
+export function parseBRLFloat(value: string | number): number {
+  if (value === undefined || value === null) return 0;
+  if (typeof value === "number") return value;
+  const cleaned = value.replace(/\./g, "").replace(",", ".");
+  return parseFloat(cleaned) || 0;
+}

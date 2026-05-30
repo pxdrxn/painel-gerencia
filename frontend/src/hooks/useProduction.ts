@@ -8,6 +8,7 @@ export interface ProductionRanking {
   unit_id: string;
   unit_name: string;
   quantity: number;
+  observations?: string;
 }
 
 export interface MonthlyProduction {
