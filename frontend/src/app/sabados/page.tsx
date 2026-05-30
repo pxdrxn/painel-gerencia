@@ -114,28 +114,32 @@ export default function SaturdayScalePage() {
       label: "Escala do Sábado",
       render: (val: string, row: any) => (
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => handleUpdateAction(row.id, val, "folgou")}
-            className={cn(
-              "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
-              val === "folgou"
-                ? "bg-red-500 text-white border-red-500 shadow-sm"
-                : "bg-white text-red-600 border-red-200 hover:bg-red-50"
-            )}
-          >
-            FOLGOU
-          </button>
-          <button
-            onClick={() => handleUpdateAction(row.id, val, "largou_12h")}
-            className={cn(
-              "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
-              val === "largou_12h"
-                ? "bg-[#0284C7] text-white border-[#0284C7] shadow-sm"
-                : "bg-white text-[#0284C7] border-sky-200 hover:bg-sky-50"
-            )}
-          >
-            LARGOU DE MEIO DIA
-          </button>
+          {(val === "pendente" || val === "folgou" || !val) && (
+            <button
+              onClick={() => handleUpdateAction(row.id, val, "folgou")}
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
+                val === "folgou"
+                  ? "bg-red-500 text-white border-red-500 shadow-sm"
+                  : "bg-white text-red-600 border-red-200 hover:bg-red-50"
+              )}
+            >
+              FOLGOU
+            </button>
+          )}
+          {(val === "pendente" || val === "largou_12h" || !val) && (
+            <button
+              onClick={() => handleUpdateAction(row.id, val, "largou_12h")}
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
+                val === "largou_12h"
+                  ? "bg-[#0284C7] text-white border-[#0284C7] shadow-sm"
+                  : "bg-white text-[#0284C7] border-sky-200 hover:bg-sky-50"
+              )}
+            >
+              LARGOU DE MEIO DIA
+            </button>
+          )}
         </div>
       ),
     },
