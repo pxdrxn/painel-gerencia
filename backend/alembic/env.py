@@ -76,11 +76,12 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
         connect_args={
             "connect_timeout": 10,
-            "options": "-c lock_timeout=10000",  # Cancela se houver lock por mais de 10s
         },
     )
 
     with connectable.connect() as connection:
+        # Define lock_timeout via SQL para compatibilidade com PgBouncer/Neon connection poolers
+        connection.execute(sa.text("SET lock_timeout = 10000"))
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()
