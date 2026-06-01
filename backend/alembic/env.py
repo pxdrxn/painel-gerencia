@@ -60,7 +60,7 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Rodar migrations em modo online (sync)."""
-    from sqlalchemy import create_engine
+    from sqlalchemy import create_engine, text
     
     # Normaliza e troca o driver para psycopg2 para a migração
     sync_url = settings.DATABASE_URL
@@ -81,7 +81,7 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         # Define lock_timeout via SQL para compatibilidade com PgBouncer/Neon connection poolers
-        connection.execute(sa.text("SET lock_timeout = 10000"))
+        connection.execute(text("SET lock_timeout = 10000"))
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()
