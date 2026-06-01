@@ -34,6 +34,11 @@ settings = get_settings()
 
 # asyncpg não suporta 'sslmode' ou 'channel_binding', exige 'ssl=require'
 db_url = settings.DATABASE_URL
+if db_url.startswith("postgresql://"):
+    db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+elif db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
+
 if "postgresql+asyncpg" in db_url:
     import re
     db_url = re.sub(r'[&?]channel_binding=[^&]+', '', db_url)
@@ -48,6 +53,7 @@ engine = create_async_engine(
     max_overflow=settings.DB_MAX_OVERFLOW,
     pool_timeout=settings.DB_POOL_TIMEOUT,
     echo=settings.DB_ECHO,
+    connect_args={"timeout": 10},  # timeout de conexão de 10s
 )
 
 async_session_factory = async_sessionmaker(

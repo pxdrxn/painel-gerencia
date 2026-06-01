@@ -62,12 +62,22 @@ def run_migrations_online() -> None:
     """Rodar migrations em modo online (sync)."""
     from sqlalchemy import create_engine
     
-    # Troca o driver async pelo psycopg2 para a migração
-    sync_url = settings.DATABASE_URL.replace("postgresql+asyncpg", "postgresql+psycopg2")
+    # Normaliza e troca o driver para psycopg2 para a migração
+    sync_url = settings.DATABASE_URL
+    if sync_url.startswith("postgresql+asyncpg://"):
+        sync_url = sync_url.replace("postgresql+asyncpg://", "postgresql+psycopg2://", 1)
+    elif sync_url.startswith("postgresql://"):
+        sync_url = sync_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+    elif sync_url.startswith("postgres://"):
+        sync_url = sync_url.replace("postgres://", "postgresql+psycopg2://", 1)
     
     connectable = create_engine(
         sync_url,
         poolclass=pool.NullPool,
+        connect_args={
+            "connect_timeout": 10,
+            "options": "-c lock_timeout=10000",  # Cancela se houver lock por mais de 10s
+        },
     )
 
     with connectable.connect() as connection:
