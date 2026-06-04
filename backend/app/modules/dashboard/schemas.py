@@ -25,5 +25,5 @@ class DashboardMetrics(BaseModel):
     efficiency_label: str = "Operacional"  # "Operacional" | "Crítico" | "Excelente"
 
     # Dados adicionais para gráficos
-    production_total_month: int = 0
+    production_total_month: float = 0.0
     production_growth_pct: float | None = None

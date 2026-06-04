@@ -67,7 +67,13 @@ class GoalRepository(BaseRepository[UnitGoal]):
         result = await self.db.execute(query)
         row = result.first()
         
-        if not row or not row.target or row.target == 0:
+        if not row:
             return 0.0
             
-        return round(float((row.achieved / row.target) * 100), 2)
+        achieved = row.achieved or 0
+        target = row.target or 0
+        
+        if target == 0:
+            return 0.0
+            
+        return round(float((achieved / target) * 100), 2)
