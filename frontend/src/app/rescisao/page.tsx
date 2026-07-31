@@ -86,8 +86,8 @@ export default function RescisionPage() {
     },
     {
       key: "cnpj",
-      label: "CNPJ",
-      render: (val: string) => val || "—",
+      label: "CNPJ / CPF",
+      render: (val: string, row: any) => row.cnpj || row.cpf || "—",
     },
     {
       key: "rescision_type",
