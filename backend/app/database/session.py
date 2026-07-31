@@ -97,12 +97,12 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 async def init_db() -> None:
     """
-    Inicializa o banco de dados.
+    Inicializa o banco de dados e garante schemas essenciais.
     """
-    # Validação simples da conexão (rodar "SELECT 1")
     async with engine.begin() as conn:
         from sqlalchemy import text
         await conn.execute(text("SELECT 1"))
+        await conn.execute(text("ALTER TABLE vacations ADD COLUMN IF NOT EXISTS pause_date DATE"))
 
 
 async def close_db() -> None:
