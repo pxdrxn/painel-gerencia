@@ -127,6 +127,7 @@ class VacationRepository(BaseRepository[Vacation]):
                 "end_date": vac.end_date,
                 "status": vac.status,
                 "observations": vac.observations,
+                "pause_date": vac.pause_date,
                 "created_at": vac.created_at,
             })
         return data

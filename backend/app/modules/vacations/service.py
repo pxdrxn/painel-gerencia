@@ -68,7 +68,9 @@ class VacationService:
         if old_status != new_status:
             if new_status == "em_andamento":
                 await self.employee_repo.update(vacation.employee_id, {"status": "ferias"})
-            elif old_status == "em_andamento" and new_status in ("concluida", "cancelada"):
+            elif old_status in ("em_andamento", "ferias") and new_status in ("concluida", "cancelada", "pausada"):
+                await self.employee_repo.update(vacation.employee_id, {"status": "ativo"})
+            elif old_status == "pausada" and new_status in ("concluida", "cancelada"):
                 await self.employee_repo.update(vacation.employee_id, {"status": "ativo"})
 
         return updated

@@ -12,6 +12,7 @@ export interface Vacation {
   end_date: string;
   status: string;
   observations: string | null;
+  pause_date: string | null;
 }
 
 export function useVacations() {
@@ -46,6 +47,7 @@ export function useVacations() {
     start_date: string;
     end_date: string;
     observations?: string;
+    pause_date?: string | null;
   }) => {
     const res = await api.post<{ id: string }>("/api/vacations", vacationData);
     await fetchVacations();
@@ -57,6 +59,7 @@ export function useVacations() {
     end_date?: string;
     status?: string;
     observations?: string;
+    pause_date?: string | null;
   }) => {
     const res = await api.patch<{ id: string }>(`/api/vacations/${id}`, vacationData);
     await fetchVacations();

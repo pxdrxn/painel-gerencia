@@ -16,6 +16,7 @@ class VacationCreate(BaseModel):
     start_date: date
     end_date: date
     observations: str | None = None
+    pause_date: date | None = None
 
     @model_validator(mode="after")
     def validate_dates(self):
@@ -29,8 +30,9 @@ class VacationUpdate(BaseModel):
     """Dados para editar férias (todos opcionais)."""
     start_date: date | None = None
     end_date: date | None = None
-    status: str | None = None  # agendada | cancelada
+    status: str | None = None  # agendada | em_andamento | pausada | concluida | cancelada
     observations: str | None = None
+    pause_date: date | None = None
 
 
 class VacationResponse(BaseModel):
@@ -41,8 +43,9 @@ class VacationResponse(BaseModel):
     hire_date: date | None = None  # Via join — "Data Contratação" no PDF
     start_date: date  # "Período Saída" no PDF
     end_date: date  # "Retorno" no PDF
-    status: str  # Agendado | Disponível | Ok | Concluído
+    status: str  # agendada | em_andamento | pausada | concluida | cancelada
     observations: str | None
+    pause_date: date | None = None
     created_at: datetime
 
     model_config = {"from_attributes": True}

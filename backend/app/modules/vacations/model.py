@@ -51,9 +51,12 @@ class Vacation(Base, TimestampMixin):
     )
     status: Mapped[str] = mapped_column(
         String(20), nullable=False, default="agendada"
-    )  # agendada | em_andamento | concluida | cancelada
+    )  # agendada | em_andamento | pausada | concluida | cancelada
     observations: Mapped[str | None] = mapped_column(
         Text, nullable=True
+    )
+    pause_date: Mapped[date | None] = mapped_column(
+        Date, nullable=True
     )
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), nullable=True

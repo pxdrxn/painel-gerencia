@@ -23,6 +23,7 @@ export default function VacationsPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [observations, setObservations] = useState("");
+  const [pauseDate, setPauseDate] = useState("");
   
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingVacation, setEditingVacation] = useState<any | null>(null);
@@ -30,6 +31,7 @@ export default function VacationsPage() {
   const [editEndDate, setEditEndDate] = useState("");
   const [editObservations, setEditObservations] = useState("");
   const [editStatus, setEditStatus] = useState("");
+  const [editPauseDate, setEditPauseDate] = useState("");
 
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -41,6 +43,7 @@ export default function VacationsPage() {
   const statusOptions = [
     { value: "agendada", label: "Agendada" },
     { value: "em_andamento", label: "Em Andamento" },
+    { value: "pausada", label: "Pausada" },
     { value: "concluida", label: "Concluída" },
     { value: "cancelada", label: "Cancelada" }
   ];
@@ -51,6 +54,7 @@ export default function VacationsPage() {
     setStartDate("");
     setEndDate("");
     setObservations("");
+    setPauseDate("");
     setIsModalOpen(true);
   };
 
@@ -61,6 +65,7 @@ export default function VacationsPage() {
     setEditEndDate(vac.end_date.split("T")[0]);
     setEditObservations(vac.observations || "");
     setEditStatus(vac.status);
+    setEditPauseDate(vac.pause_date ? vac.pause_date.split("T")[0] : "");
     setIsEditModalOpen(true);
   };
 
@@ -76,7 +81,8 @@ export default function VacationsPage() {
         employee_id: employeeId,
         start_date: startDate,
         end_date: endDate,
-        observations
+        observations,
+        pause_date: pauseDate || null,
       });
       setIsModalOpen(false);
     } catch (err: any) {
@@ -98,7 +104,8 @@ export default function VacationsPage() {
         start_date: editStartDate,
         end_date: editEndDate,
         observations: editObservations,
-        status: editStatus
+        status: editStatus,
+        pause_date: editPauseDate || null,
       });
       setIsEditModalOpen(false);
     } catch (err: any) {
@@ -119,8 +126,9 @@ export default function VacationsPage() {
 
   const columns = [
     { key: "employee_name", label: "Colaborador", render: (val: string, row: any) => <span className="font-medium text-gray-900">{val || row.employee_id}</span> },
-    { key: "start_date", label: "Período Saída", render: (val: string) => formatDate(val) },
-    { key: "end_date", label: "Retorno", render: (val: string) => formatDate(val) },
+    { key: "start_date", label: "Início", render: (val: string) => <span className="font-semibold text-gray-800">{formatDate(val)}</span> },
+    { key: "end_date", label: "Término", render: (val: string) => <span className="font-semibold text-gray-800">{formatDate(val)}</span> },
+    { key: "pause_date", label: "Data de Pausa", render: (val: string) => val ? <span className="font-semibold text-amber-700">{formatDate(val)}</span> : <span className="text-gray-400">—</span> },
     { key: "observations", label: "Observações", render: (val: string) => <span className="text-gray-600 text-sm max-w-[200px] truncate block" title={val}>{val || "—"}</span> },
     { key: "status", label: "Status", render: (val: string) => <Badge status={val} /> },
     {
@@ -137,6 +145,13 @@ export default function VacationsPage() {
               >
                 Concluir
               </Button>
+              <Button
+                size="sm"
+                className="bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-200 font-semibold"
+                onClick={() => updateVacation(row.id, { status: "pausada", pause_date: new Date().toISOString().split("T")[0] })}
+              >
+                Pausar
+              </Button>
               <Button 
                 size="sm" 
                 variant="danger" 
@@ -145,6 +160,15 @@ export default function VacationsPage() {
                 Cancelar
               </Button>
             </>
+          )}
+          {row.status === "pausada" && (
+            <Button
+              size="sm"
+              className="bg-green-100 text-green-700 hover:bg-green-200 border border-green-200 font-semibold"
+              onClick={() => updateVacation(row.id, { status: "em_andamento" })}
+            >
+              Retomar
+            </Button>
           )}
           <Button
             size="sm"
@@ -225,6 +249,13 @@ export default function VacationsPage() {
             />
           </div>
 
+          <Input 
+            type="date"
+            label="Data de Pausa (Retorno ao trabalho)"
+            value={pauseDate}
+            onChange={(e) => setPauseDate(e.target.value)}
+          />
+
           <div className="space-y-1">
             <label className="block text-sm font-medium text-gray-700">Observações</label>
             <textarea
@@ -281,6 +312,13 @@ export default function VacationsPage() {
               required
             />
           </div>
+
+          <Input 
+            type="date"
+            label="Data de Pausa (Retorno ao trabalho)"
+            value={editPauseDate}
+            onChange={(e) => setEditPauseDate(e.target.value)}
+          />
 
           <Select 
             label="Status *"
