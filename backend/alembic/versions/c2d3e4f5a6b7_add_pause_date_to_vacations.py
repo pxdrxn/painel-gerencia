@@ -18,10 +18,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column(
-        'vacations',
-        sa.Column('pause_date', sa.Date(), nullable=True)
-    )
+    op.execute("ALTER TABLE vacations ADD COLUMN IF NOT EXISTS pause_date DATE")
 
 
 def downgrade() -> None:
