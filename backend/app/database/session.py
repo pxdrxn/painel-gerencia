@@ -103,6 +103,37 @@ async def init_db() -> None:
         from sqlalchemy import text
         await conn.execute(text("SELECT 1"))
         await conn.execute(text("ALTER TABLE vacations ADD COLUMN IF NOT EXISTS pause_date DATE"))
+        await conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS daily_rates (
+                id UUID PRIMARY KEY,
+                employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+                start_date DATE NOT NULL,
+                end_date DATE NOT NULL,
+                daily_value NUMERIC(10, 2) NOT NULL DEFAULT 0.0,
+                days_count NUMERIC(5, 2) NOT NULL DEFAULT 0.0,
+                total_value NUMERIC(10, 2) NOT NULL DEFAULT 0.0,
+                rule_type VARCHAR(30) NOT NULL DEFAULT 'seg_sab',
+                work_saturdays BOOLEAN NOT NULL DEFAULT TRUE,
+                discount_absences BOOLEAN NOT NULL DEFAULT TRUE,
+                discount_vacations BOOLEAN NOT NULL DEFAULT TRUE,
+                absences_deducted INTEGER NOT NULL DEFAULT 0,
+                vacations_deducted INTEGER NOT NULL DEFAULT 0,
+                saturday_half_days INTEGER NOT NULL DEFAULT 0,
+                additions_value NUMERIC(10, 2) NOT NULL DEFAULT 0.0,
+                discounts_value NUMERIC(10, 2) NOT NULL DEFAULT 0.0,
+                status VARCHAR(20) NOT NULL DEFAULT 'pendente',
+                payment_date DATE,
+                notes TEXT,
+                details_breakdown JSON NOT NULL DEFAULT '[]'::json,
+                created_by UUID,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        """))
+        await conn.execute(text("CREATE INDEX IF NOT EXISTS ix_daily_rates_employee_id ON daily_rates (employee_id)"))
+        await conn.execute(text("CREATE INDEX IF NOT EXISTS ix_daily_rates_start_date ON daily_rates (start_date)"))
+        await conn.execute(text("CREATE INDEX IF NOT EXISTS ix_daily_rates_end_date ON daily_rates (end_date)"))
+        await conn.execute(text("CREATE INDEX IF NOT EXISTS ix_daily_rates_status ON daily_rates (status)"))
 
 
 async def close_db() -> None:

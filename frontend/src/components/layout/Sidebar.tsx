@@ -13,6 +13,7 @@ import {
   FiTrendingUp, 
   FiFileText,
   FiBriefcase,
+  FiDollarSign,
   FiChevronLeft,
   FiChevronRight,
   FiLogOut
@@ -29,6 +30,7 @@ const NAV_ITEMS = [
   { label: "Disponibilidade", href: "/disponibilidade", icon: FiCheckSquare },
   { label: "Folgas & Faltas", href: "/folgas", icon: FiActivity },
   { label: "Sábados", href: "/sabados", icon: FiClock },
+  { label: "Diárias", href: "/diarias", icon: FiDollarSign },
   { label: "Produção", href: "/producao", icon: FiTrendingUp },
   { label: "Rescisões", href: "/rescisao", icon: FiFileText },
 ];
