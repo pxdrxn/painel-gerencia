@@ -18,8 +18,10 @@ export default function CnpjPage() {
   const [searchInput, setSearchInput] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editField, setEditField] = useState<"cnpj" | "cpf">("cnpj");
   const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
   const [cnpjValue, setCnpjValue] = useState("");
+  const [cpfValue, setCpfValue] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -37,9 +39,19 @@ export default function CnpjPage() {
     return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12, 14)}`;
   };
 
-  const handleOpenModal = (emp: any) => {
+  const formatCPFInput = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+    if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
+  };
+
+  const handleOpenModal = (emp: any, field: "cnpj" | "cpf" = "cnpj") => {
     setSelectedEmployee(emp);
+    setEditField(field);
     setCnpjValue(emp.cnpj || "");
+    setCpfValue(emp.cpf || "");
     setErrorMsg("");
     setIsModalOpen(true);
   };
@@ -52,15 +64,20 @@ export default function CnpjPage() {
     setErrorMsg("");
 
     try {
-      const formattedCnpj = cnpjValue.trim() || null;
-      await updateEmployee(selectedEmployee.id, {
-        cnpj: formattedCnpj,
-      });
+      if (editField === "cnpj") {
+        await updateEmployee(selectedEmployee.id, {
+          cnpj: cnpjValue.trim() || null,
+        });
+      } else {
+        await updateEmployee(selectedEmployee.id, {
+          cpf: cpfValue.trim() || null,
+        });
+      }
       await refetch();
       setIsModalOpen(false);
     } catch (err: any) {
       console.error(err);
-      setErrorMsg(err.message || "Erro ao salvar CNPJ.");
+      setErrorMsg(err.message || `Erro ao salvar ${editField === "cnpj" ? "CNPJ" : "CPF"}.`);
     } finally {
       setIsSaving(false);
     }
@@ -102,11 +119,22 @@ export default function CnpjPage() {
     {
       key: "cpf",
       label: "CPF",
-      render: (val: string, row: any) => (
-        <span className="font-mono text-gray-500">
-          {!row.cnpj && val ? formatCPF(val) : "—"}
-        </span>
-      ),
+      render: (val: string, row: any) =>
+        !row.cnpj ? (
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-gray-500">{val ? formatCPF(val) : "—"}</span>
+            <button
+              type="button"
+              title="Editar CPF"
+              className="text-gray-400 hover:text-[#0369A1] transition-colors"
+              onClick={() => handleOpenModal(row, "cpf")}
+            >
+              <FiEdit2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          <span className="font-mono text-gray-500">—</span>
+        ),
     },
     {
       key: "actions",
@@ -116,7 +144,7 @@ export default function CnpjPage() {
           size="sm"
           variant="outline"
           className="gap-1.5 border-sky-200 text-[#0369A1] hover:bg-sky-50"
-          onClick={() => handleOpenModal(row)}
+          onClick={() => handleOpenModal(row, "cnpj")}
         >
           <FiEdit2 className="w-3.5 h-3.5" /> Editar CNPJ
         </Button>
@@ -172,7 +200,7 @@ export default function CnpjPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={`Vincular CNPJ — ${selectedEmployee?.name}`}
+        title={`${editField === "cnpj" ? "Vincular CNPJ" : "Editar CPF"} — ${selectedEmployee?.name}`}
       >
         <form onSubmit={handleSave} className="space-y-4">
           {errorMsg && (
@@ -181,22 +209,41 @@ export default function CnpjPage() {
             </div>
           )}
 
-          <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">CNPJ do Colaborador</label>
-            <div className="relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FiHash className="text-gray-400 w-4 h-4" />
+          {editField === "cnpj" ? (
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-gray-700">CNPJ do Colaborador</label>
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiHash className="text-gray-400 w-4 h-4" />
+                </div>
+                <Input
+                  type="text"
+                  placeholder="00.000.000/0000-00"
+                  className="pl-9 w-full font-mono"
+                  value={cnpjValue}
+                  onChange={(e) => setCnpjValue(formatCNPJInput(e.target.value))}
+                />
               </div>
-              <Input
-                type="text"
-                placeholder="00.000.000/0000-00"
-                className="pl-9 w-full font-mono"
-                value={cnpjValue}
-                onChange={(e) => setCnpjValue(formatCNPJInput(e.target.value))}
-              />
+              <p className="text-xs text-gray-400 mt-1">Deixe em branco para remover o CNPJ associado.</p>
             </div>
-            <p className="text-xs text-gray-400 mt-1">Deixe em branco para remover o CNPJ associado.</p>
-          </div>
+          ) : (
+            <div className="space-y-1">
+              <label className="block text-sm font-medium text-gray-700">CPF do Colaborador</label>
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiHash className="text-gray-400 w-4 h-4" />
+                </div>
+                <Input
+                  type="text"
+                  placeholder="000.000.000-00"
+                  className="pl-9 w-full font-mono"
+                  value={cpfValue}
+                  onChange={(e) => setCpfValue(formatCPFInput(e.target.value))}
+                />
+              </div>
+              <p className="text-xs text-gray-400 mt-1">Deixe em branco para remover o CPF associado.</p>
+            </div>
+          )}
 
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
             <Button
