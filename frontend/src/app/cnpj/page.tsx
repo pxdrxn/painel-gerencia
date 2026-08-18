@@ -11,6 +11,7 @@ import Modal from "@/components/ui/Modal";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import { FiEdit2, FiHash, FiSearch } from "react-icons/fi";
+import { formatCPF } from "@/lib/utils";
 
 export default function CnpjPage() {
   const { employees, isLoading, updateEmployee, refetch, filters, updateFilters } = useEmployees({ limit: 100 });
@@ -96,6 +97,15 @@ export default function CnpjPage() {
       label: "CNPJ",
       render: (val: string) => (
         <span className="font-mono text-gray-700 font-semibold">{val || "—"}</span>
+      ),
+    },
+    {
+      key: "cpf",
+      label: "CPF",
+      render: (val: string, row: any) => (
+        <span className="font-mono text-gray-500">
+          {!row.cnpj && val ? formatCPF(val) : "—"}
+        </span>
       ),
     },
     {
