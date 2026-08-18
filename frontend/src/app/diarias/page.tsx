@@ -432,6 +432,18 @@ export default function DailyRatesPage() {
       },
     },
     {
+      key: "notes",
+      label: "Observações",
+      render: (val: string, row: DailyRateRecord) => (
+        <span
+          className="text-xs text-gray-600 max-w-[220px] whitespace-normal break-words block font-medium"
+          title={val || row.notes || undefined}
+        >
+          {val || row.notes || <span className="text-gray-400 italic">Nenhuma</span>}
+        </span>
+      ),
+    },
+    {
       key: "actions",
       label: "Ações",
       render: (_: any, row: DailyRateRecord) => (
@@ -838,7 +850,7 @@ export default function DailyRatesPage() {
                         <th className="py-3 px-4">Dia da Semana</th>
                         <th className="py-3 px-4">Ocorrência / Situação</th>
                         <th className="py-3 px-4">Diária Atribuída</th>
-                        <th className="py-3 px-4 text-right">Ação / Ajuste</th>
+                        <th className="py-3 px-4 text-right">Ajuste de Diária</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 font-medium">
@@ -930,10 +942,11 @@ export default function DailyRatesPage() {
                               <button
                                 type="button"
                                 onClick={() => handleToggleDayFactor(item.date, item.rate_factor)}
-                                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
-                                title="Alternar fator deste dia (1.0 -> 0.5 -> 0.0)"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-black bg-[#1B365D] hover:bg-[#244577] text-white shadow-sm hover:shadow transition-all active:scale-95 border border-[#152a4a] cursor-pointer"
+                                title="Clique para alternar o valor deste dia (1.0 → 0.5 → 0.0 diária)"
                               >
-                                Alternar
+                                <FiRefreshCw className="w-3.5 h-3.5 text-blue-200" />
+                                <span>Alternar</span>
                               </button>
                             </td>
                           </tr>
