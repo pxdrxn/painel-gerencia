@@ -942,10 +942,10 @@ export default function DailyRatesPage() {
                               <button
                                 type="button"
                                 onClick={() => handleToggleDayFactor(item.date, item.rate_factor)}
-                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-black bg-[#1B365D] hover:bg-[#244577] text-white shadow-sm hover:shadow transition-all active:scale-95 border border-[#152a4a] cursor-pointer"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-black bg-[#0F172A] hover:bg-[#1E293B] text-white shadow-sm hover:shadow-md transition-all active:scale-95 border border-[#020617] cursor-pointer"
                                 title="Clique para alternar o valor deste dia (1.0 → 0.5 → 0.0 diária)"
                               >
-                                <FiRefreshCw className="w-3.5 h-3.5 text-blue-200" />
+                                <FiRefreshCw className="w-3.5 h-3.5 text-white" />
                                 <span>Alternar</span>
                               </button>
                             </td>
